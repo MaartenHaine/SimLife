@@ -151,6 +151,7 @@ public abstract class Entity
     /**
      * Changes the orientation of the entity.
      * @pre | orientation != null
+     * @mutates | getOrientation()
      * @post | getOrientation().equals(orientation)
      */
     public void setOrientation(Orientation orientation) {
@@ -158,6 +159,7 @@ public abstract class Entity
     }
     
     /**
+     * @mutates | getOrientation()
      * @post | getOrientation().equals(old(getOrientation()).turnClockwise(1))
      */
 	public void turnClockwise()
@@ -166,6 +168,7 @@ public abstract class Entity
 	}
 
 	/**
+	 * @mutates | getOrientation()
      * @post | getOrientation().equals(old(getOrientation()).turnCounterclockwise(1))
      */
 	public void turnCounterclockwise()
@@ -192,7 +195,12 @@ public abstract class Entity
     /**
      * The current position is set (if there is room) to current pos + current orientation.
      * Note: this method is not probabilistic
+     * @mutates_properties | getWorld().giveEntityGrid()
      * @post | Logic.implies(getWorld().isFree(destination()),getPosition().equals(destination()))
+     * 
+     * @post | old(getWorld()) == getWorld()
+	 * @post | getOrientation().equals(old(getOrientation()))
+	 * @post | getMoveProbability()==old(getMoveProbability())
      */
     public void moveForward()
     {
@@ -214,13 +222,20 @@ public abstract class Entity
      * See RandomUtil.unfairBool
      * 
      * @post creature moves forward (one step forward in the direction of its orientation) with proba moveProbability and if destination() is free
+     * 
+     * @post | old(getWorld()) == getWorld()
+	 * @post | getOrientation().equals(old(getOrientation()))
+	 * @post | getMoveProbability()==old(getMoveProbability())
      */
     public void moveForwardWithProbability()
     {
     	//OUD: geen implementatie
     	if(RandomUtil.unfairBool(moveProbability)) {moveForward();}
     }
-    
+    /**
+     * @post | old(getWorld()) == getWorld()
+	 * @post | getMoveProbability()==old(getMoveProbability())
+     */
     public abstract void performAction();
 
 	/**
