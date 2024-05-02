@@ -12,7 +12,12 @@ import util.Point;
 import static util.Logic.*
 ;
 
-
+/**
+ * @invar alle bestaande entities in de grid zitten in de wereld 
+ * | giveEntityGrid().givePositionStream().map(pos -> giveEntityGrid().at(pos)).allMatch(ent-> ent==null ||ent.getWorld()==this)
+ * @invar Entity posities komen overeen met hun posities in world
+ * | giveEntityGrid().givePositionStream().allMatch(pos -> giveEntityGrid().at(pos)==null ||giveEntityGrid().at(pos).getPosition().equals(pos))
+ */
 public class World
 {
 
@@ -26,6 +31,11 @@ public class World
 	}
 
 	/**
+	 * 
+	 * @invar alle bestaande entities in de grid zitten in de wereld
+	 * | entityGrid.givePositionStream().map(pos -> entityGrid.at(pos)).allMatch(ent-> ent==null ||ent.getWorld()==this)
+	 * @invar Entity posities komen overeen met hun posities in world
+	 * | entityGrid.givePositionStream().allMatch(pos -> entityGrid.at(pos)==null ||entityGrid.at(pos).getPosition().equals(pos) )
 	 * @representationObject
 	 * @peerObjects
 	 */
