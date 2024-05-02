@@ -89,7 +89,6 @@ public class Hunter extends Entity
 		//		var newOrientation = Orientation.fromVector(targetDirection);
 		//		setOrientation(newOrientation);
 		//		
-		//		
 		//		//if one is 100% sure that thing is a Prey one may use subcasting
 		//		var prey = (Prey) thing;
 
