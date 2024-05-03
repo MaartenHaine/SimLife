@@ -14,8 +14,22 @@ import util.RandomUtil;
 public class Chromosome
 {
 
+	 /**
+     * @representationObject
+     * @invar | weights != null 
+     * @invar | weights.length == Constants.CHROM_SIZE
+     * @invar | Arrays.stream(weights).allMatch(Chromosome::isValidGene)
+     */
+
     private final int[] weights;
 
+	/**
+     * @throws IllegalArgumentException | weights == null
+     * @throws IllegalArgumentException | weights.length != Constants.CHROM_SIZE
+     * @throws IllegalArgumentException | Arrays.stream(weights).anyMatch(g -> !isValidGene(g))
+     * @inspects | weights
+     * @post | IntStream.range(0, Constants.CHROM_SIZE).allMatch(i -> weights[i] == this.getGene(i))
+     */
 	public Chromosome(int[] weights)
 	{
 		if (weights == null) {throw new IllegalArgumentException();}
@@ -24,6 +38,14 @@ public class Chromosome
 	    
 		this.weights = Arrays.copyOf(weights, weights.length);
 	}
+
+
+	/**
+	 * Gives 1 randomly generated chromosome
+	 * 
+	 * @creates | result
+	 * @post | result != null
+	 */
 
 	public static Chromosome createRandom()
     {
@@ -34,6 +56,15 @@ public class Chromosome
         return new Chromosome(genes);
     }
 
+	/**
+	 * Gives `count` randomly generated chromosomes
+	 * 
+	 * @pre | count > 0
+	 * @creates | result
+	 * @post | result != null
+	 * @post | result.length == count
+	 * @post | Arrays.stream(result).allMatch(c -> c != null)
+	 */
 
     public static ArrayList<Chromosome> createRandom(int count)
     {
@@ -42,12 +73,19 @@ public class Chromosome
     	return new ArrayList<>(stream.toList());
     }
     
+	/**
+     * @post | result == (Constants.GENE_MIN <= gene && gene <= Constants.GENE_MAX)
+     */
 
     public static boolean isValidGene(int gene)
     {
     	return Constants.GENE_MIN <= gene && gene <= Constants.GENE_MAX;
     }
 
+	/**
+     * @pre | 0 <= index && index < Constants.CHROM_SIZE
+     * @post | isValidGene(result)
+     */
 
     public int getGene(int index)
     {
@@ -74,18 +112,39 @@ public class Chromosome
     	return new Chromosome(offspringGenes);
     }
     
+	/**
+     * @pre | other != null
+     * @pre | 0 <= index && index <= Constants.CHROM_SIZE
+     * @inspects | other
+     * @post | result == IntStream.range(0, index).allMatch(i -> getGene(i) == other.getGene(i))
+     */
 
     public boolean matchesUntil(Chromosome other, int index)
     {
     	return IntStream.range(0, index).allMatch(i -> getGene(i) == other.getGene(i));
     }
     
+	/**
+     * @pre | other != null
+     * @pre | 0 <= index && index <= Constants.CHROM_SIZE
+     * @inspects | other
+     * @post | result == IntStream.range(index, Constants.CHROM_SIZE).allMatch(i -> getGene(i) == other.getGene(i))
+     */
 
     public boolean matchesFrom(Chromosome other, int index)
     {
     	return IntStream.range(index, Constants.CHROM_SIZE).allMatch(i -> getGene(i) == other.getGene(i));
     }
 
+	/**
+     * @pre | 0 <= index && index < Constants.CHROM_SIZE
+     * @post the gene is modified with += delta if the modif. remains in bounds Constants.GENE_MIN, Constants.GENE_MAX
+     * 	| implies(isValidGene(getGene(index) + delta), result.getGene(index) == getGene(index) + delta)
+     * @post the gene remains unchanged if mutating it with delta causes it to become invalid
+     *  | implies(!isValidGene(getGene(index) + delta), result.getGene(index) == getGene(index))
+     * @post only the gene with the given index may change 
+     *  | onlyDiffersAt(result, index)
+     */
 
     public Chromosome mutate(int index, int delta)
     {
@@ -99,6 +158,9 @@ public class Chromosome
     	return new Chromosome(res);
     }
 
+	/**
+     * @post | IntStream.range(0, Constants.CHROM_SIZE).anyMatch(i -> onlyDiffersAt(result, i))
+     */
 
     public Chromosome randomlyMutate()
     {
@@ -108,6 +170,12 @@ public class Chromosome
         return mutate(index, delta);
     }
     
+	/**
+     * @pre | other != null
+     * @pre | 0 <= index && index < Constants.CHROM_SIZE
+     * @post | result == IntStream.range(0, Constants.CHROM_SIZE).allMatch(i -> implies(i != index, getGene(i) == other.getGene(i)))
+     */
+
 
     public boolean onlyDiffersAt(Chromosome other, int index)
     {
@@ -115,6 +183,10 @@ public class Chromosome
     }
     
     
+	/**
+     * @inspects | other
+     * @post | result == (other != null && IntStream.range(0, Constants.CHROM_SIZE).allMatch(i -> getGene(i) == other.getGene(i)))
+     */
 
     public boolean isEqual(Chromosome other) {
     	boolean res = (other != null);
