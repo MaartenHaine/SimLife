@@ -1,6 +1,8 @@
 package sim;
 
+import static util.Logic.*;
 
+import java.util.Arrays;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.IntStream;
@@ -18,28 +20,32 @@ public class Simulation
 	 * not a representation object for performance
 	 */
 	private World world;
+
+
 	
 	private final int worldSize;
-
+	
     private final int preyCount; // Number of preys a new world should be inhabited with
     
     private final int huntersPerShelter;
-    
+
     private final int shelterCount;
     
     public Simulation(int worldSize, int shelterCount, int inhabitantsPerShelter, int huntersPerShelter)
     {
-    	this.worldSize = 0;
-    	this.shelterCount = 0;
-    	this.preyCount = 0;
-    	this.inhabitantsPerShelter = 0;
-    	this.huntersPerShelter = 0;
-    	this.world = null;
+    	this.worldSize = worldSize;
+    	this.shelterCount = shelterCount;
+    	this.preyCount = shelterCount*inhabitantsPerShelter;
+    	this.inhabitantsPerShelter = inhabitantsPerShelter;
+    	this.huntersPerShelter = huntersPerShelter;
+    	this.world = new World(worldSize, worldSize);
     }
     
-
+	/**
+	 * @post | result != null
+	 */
 	public World getWorld() {
-		return null;
+		return this.world;
 	}
 	
 	/**
@@ -56,7 +62,8 @@ public class Simulation
 		
 		ArrayList<Point> positions = new ArrayList<Point>(world.givePositionStream().toList());
 		RandomUtil.shuffle(positions);
-		return null;
+
+		return world;
 	}
     
 	/**

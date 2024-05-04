@@ -1,6 +1,6 @@
 package sim;
 
-import static util.Logic.implies;
+import static util.Logic.*;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -62,8 +62,8 @@ public class Chromosome
 	 * @pre | count > 0
 	 * @creates | result
 	 * @post | result != null
-	 * @post | result.length == count
-	 * @post | Arrays.stream(result).allMatch(c -> c != null)
+	 * @post | result.size() == count
+	 * @post | result.stream().allMatch(c -> c != null)
 	 */
 
     public static ArrayList<Chromosome> createRandom(int count)
