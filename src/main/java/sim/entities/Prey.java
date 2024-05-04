@@ -19,6 +19,10 @@ import static util.Logic.*;
  * @invar every sibling in the siblings arrayList has this as sibling as well
  * 
  * @invar | getShelter() == null  || getShelter().getInhabitants().contains(this) 
+ * 
+ *  MortalEntity invars
+ * @invar | Logic.implies(isDead(),getWorld()==null)
+ * @invar | Logic.implies(!isDead(),getWorld() !=null && getWorld().getEntities().contains(this))
  *  
  *  
  * ENTITY INVARS 
