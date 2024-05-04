@@ -73,7 +73,7 @@ public abstract class Entity
 	 * @post | getPosition().equals(position)
 	 * @post | getOrientation().equals(orientation)
 	 * @post | getMoveProbability()==moveProbability
-	 * @post | getWorld() == null || getWorld().getEntities().contains(this)
+	 * @post | getWorld() == null || getWorld().getEntityAt(position).equals(this)
 	 * @post | getWorld() == null ||  Point.isWithin(getPosition(),getWorld().getWidth(),getWorld().getHeight())
 	 */
 	Entity(World world, Point position, Orientation orientation, int moveProbability)
@@ -194,7 +194,7 @@ public abstract class Entity
      * this position is free or not.
      * 
      * @creates nieuw punt wordt gereturned | result
-     * @post | getPosition().equals(old(getPosition()).move(getOrientation().toVector()))
+     * @post | result.equals(old(getPosition()).move(getOrientation().toVector()))
      */
     public Point destination()
     {
@@ -210,7 +210,7 @@ public abstract class Entity
      * 
      * made to ignore by compiler because this is a slow operation
      * mutates_properties  getWorld().giveEntityGrid()
-     * @post | Logic.implies(getWorld().isFree(destination()),getPosition().equals(destination()))
+     * @post | Logic.implies(getWorld().isFree(old(destination())),getPosition().equals(destination()))
      * 
      * @post | old(getWorld()) == getWorld()
 	 * @post | getOrientation().equals(old(getOrientation()))

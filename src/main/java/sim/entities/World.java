@@ -110,7 +110,7 @@ public class World
 	 * @creates | result
 	 * @creates | result,... result
 	 * @post| result!=null
-	 * @post | result.stream().allMatch(ent1-> giveEntityStream().anyMatch(ent2->ent2.equals(ent1)))
+	 * @post | result.stream().allMatch(ent1-> getEntityAt(ent1.getPosition()).equals(ent1))
 	 */
 	public List<Entity> getEntities()
 	{
@@ -172,6 +172,7 @@ public class World
 	}
 
 	/**
+	 * @pre | position!=null
 	 * @pre | isInside(position)
 	 * 
 	 * @post | result==null  || result.getPosition().equals(position)
@@ -187,7 +188,7 @@ public class World
 	 * true iff position is inside the world and no creature sits there
 	 *
 	 * @pre | position != null
-	 * @post | result == this.isInside(position) && getEntityAt(position)==null
+	 * @post | result == (this.isInside(position) && getEntityAt(position)==null)
 	 */
 	public boolean isFree(Point position)
 	{	// old
