@@ -16,12 +16,14 @@ import static util.Logic.*
  * An entity has a color.
  * 
  * @invar | getPosition()!=null
+
  * @invar | getOrientation() != null
  * @invar | 0 <=getMoveProbability() && getMoveProbability()  <= 100
  * @invar if an entity is in a world, the world contains that entity  
  * | getWorld() ==null ||  getWorld().getEntities().contains(this)
  * @invar Entity positie komt overeen met hun positie in world
  * | getWorld() == null || getWorld().giveEntityGrid().at(this.getPosition())==this
+ * @invar | getWorld() == null || getWorld().giveEntityGrid().isValidPosition(getPosition())
  * @invar| getColor()!=null
  */
 public abstract class Entity
@@ -32,6 +34,7 @@ public abstract class Entity
 	 * @invar Entity positie komt overeen met hun positie in world
 	 * | world == null || world.entityGrid.at(position)==this	
 	 * @invar | position !=null
+	 * @invar | world == null || world.entityGrid.isValidPosition(getPosition())
 	 */
     private Point position;
     
@@ -61,20 +64,24 @@ public abstract class Entity
 	 * @throws IllegalArgumentException | position == null
 	 * @throws IllegalArgumentException | orientation == null
 	 * @throws IllegalArgumentException | moveProbability < 0 || moveProbability> 100
-	 * 
+	 * @throws IllegalArgumentException | world != null && world.getEntityAt(position)!=null
+	 * @throws IllegalArgumentException | world != null && !world.entityGrid.isValidPosition(position)
+	 *  
 	 * @post | world == getWorld()
 	 * @post | getPosition().equals(position)
 	 * @post | getOrientation().equals(orientation)
 	 * @post | getMoveProbability()==moveProbability
-	 * 
+	 * @post | getWorld() == null || getWorld().getEntities().contains(this)
+	 * @post | getWorld() == null || getWorld().giveEntityGrid().isValidPosition(getPosition())
 	 */
 	Entity(World world, Point position, Orientation orientation, int moveProbability)
     {
 
-		if (position == null) {throw new IllegalArgumentException();}
+		if (position == null ) {throw new IllegalArgumentException();}
 		if (orientation  == null) {throw new IllegalArgumentException();}
 		if (moveProbability < 0 || moveProbability> 100) {throw new IllegalArgumentException();}
-		
+		if (world != null && world.getEntityAt(position)!=null) {throw new IllegalArgumentException();}
+		if (world != null && !world.entityGrid.isValidPosition(position)) {throw new IllegalArgumentException();}
 		/* OUD
     	this.world = null;
     	this.position = null;
@@ -82,7 +89,10 @@ public abstract class Entity
     	this.moveProbability = 0;
     	*/
 		//world niet clonen want geen repr object?
+		
 		this.world = world;
+		if (world != null) {world.entityGrid.setAt(position,this);}
+		
     	this.position = position;
     	this.orientation = orientation;
     	this.moveProbability = moveProbability;

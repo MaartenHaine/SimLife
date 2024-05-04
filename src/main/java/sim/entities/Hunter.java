@@ -22,6 +22,7 @@ import util.RandomUtil;
  * | getWorld() ==null ||  getWorld().getEntities().contains(this)
  * @invar Entity positie komt overeen met hun positie in world
  * | getWorld() == null || getWorld().giveEntityGrid().at(this.getPosition())==this
+ * @invar | getWorld() == null || getWorld().giveEntityGrid().isValidPosition(getPosition())
  * @invar| getColor()!=null
  * 
  */
@@ -64,11 +65,18 @@ public class Hunter extends Entity
 	 *  via super: (je moet deze ook hier vermelden zie modelopl it 2 
 	 * @throws IllegalArgumentException | position == null
 	 * @throws IllegalArgumentException | orientation == null
+	 * @throws IllegalArgumentException | world != null && world.getEntityAt(position)!=null
+	 * @throws IllegalArgumentException | world != null && !world.entityGrid.isValidPosition(position)
+	 *  ??MOET DIT ERBIJ: throws IllegalArgumentException | Constants.HUNTER_MOVE_PROBABILITY < 0 || Constants.HUNTER_MOVE_PROBABILITY> 100
 	 *
 	 * @post | world == getWorld()
 	 * @post | getPosition().equals(position)
 	 * @post | getOrientation().equals(orientation)
 	 * @post | getMoveProbability()==Constants.HUNTER_MOVE_PROBABILITY
+	 * @post | getWorld() == null || getWorld().getEntities().contains(this)
+	 * @post | getWorld() == null || getWorld().giveEntityGrid().isValidPosition(getPosition())
+	 * 
+	 * @post The hunter will have Constants.HUNTER_INITIAL_APPETITE appetite
 	 * 
 	 */
 	Hunter(World world, Shelter shelter, Point position, Orientation orientation)
@@ -84,11 +92,18 @@ public class Hunter extends Entity
 	 *  via super: (je moet deze ook hier vermelden zie modelopl it 2 
 	 * @throws IllegalArgumentException | position == null
 	 * @throws IllegalArgumentException | orientation == null
-	 * 
+	 * @throws IllegalArgumentException | world != null && world.getEntityAt(position)!=null
+	 * @throws IllegalArgumentException | world != null && !world.entityGrid.isValidPosition(position)
+	 *  ??MOET DIT ERBIJ: throws IllegalArgumentException | Constants.HUNTER_MOVE_PROBABILITY < 0 || Constants.HUNTER_MOVE_PROBABILITY> 100
+	 *
 	 * @post | world == getWorld()
 	 * @post | getPosition().equals(position)
 	 * @post | getOrientation().equals(orientation)
 	 * @post | getMoveProbability()==Constants.HUNTER_MOVE_PROBABILITY
+	 * @post | getWorld() == null || getWorld().getEntities().contains(this)
+	 * @post | getWorld() == null || getWorld().giveEntityGrid().isValidPosition(getPosition())
+	 * 
+	 * @post The hunter will have an appetite as is given as argument
 	 */
 	Hunter(World world, Shelter shelter, Point position, Orientation orientation, int appetite)
 	{
@@ -179,7 +194,7 @@ public class Hunter extends Entity
     
 If no more preys inhabiting the right shelter remain, the hunter will remain immobile for the rest of its life.*/
 		
-		if(RandomUtil.unfairBool(getMoveProbability())) {
+		if(RandomUtil.unfairBool(getMoveProbability()) && appetite >0) {
 			
 			Prey target = findClosestPrey(shelter.getInhabitants());
 
@@ -191,6 +206,7 @@ If no more preys inhabiting the right shelter remain, the hunter will remain imm
 				
 				if (destination().equals(target.getPosition())) {
 					target.die(); // prey verdwijnt instantly uit de world grid dus move forward is mogelijk						
+					appetite = appetite-1;
 				}
 				moveForward(); // wanneer niet free zal hunter niet bewegen
 			}
