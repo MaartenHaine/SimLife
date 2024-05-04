@@ -1,0 +1,3 @@
+todo
+
+- bij simulation .getWorld() moet er world worden terug gegeven maar deze is geen .getcopy() voor, moet dit gecheckt worden op repr object? 
