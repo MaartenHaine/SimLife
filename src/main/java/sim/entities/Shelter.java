@@ -25,8 +25,8 @@ import util.RandomUtil;
  * @invar if an entity is in a world, the world contains that entity  
  * | getWorld() ==null ||  getWorld().getEntities().contains(this)
  * @invar Entity positie komt overeen met hun positie in world
- * | getWorld() == null || getWorld().giveEntityGrid().at(this.getPosition())==this
- * @invar | getWorld() == null || getWorld().giveEntityGrid().isValidPosition(getPosition())
+ * | getWorld() == null || getWorld().getEntityAt(getPosition()).equals(this)
+ * @invar | getWorld() == null ||  Point.isWithin(getPosition(),getWorld().getWidth(),getWorld().getHeight())
  * @invar| getColor()!=null
  */
 public class Shelter extends MortalEntity
@@ -49,8 +49,9 @@ public class Shelter extends MortalEntity
 	 * @throws IllegalArgumentException | world != null && world.getEntityAt(position)!=null
 	 * @throws IllegalArgumentException | world != null && !world.entityGrid.isValidPosition(position)
 	 *  
-	 * @mutates_properties | this.getWorld(), world.giveEntityGrid()
-	 *  
+	 * @mutates_properties | this.getWorld()
+	 * also mutates world.giveEntityGrid() (this is a very slow operation and thus not documentated in a mutates)
+	 *   
 	 * @post | world == getWorld()
 	 * @post | getPosition().equals(position)
 	 * @post | getOrientation().equals(orientation)
@@ -58,7 +59,7 @@ public class Shelter extends MortalEntity
 	 * 
 	 * @post | isDead() == false
 	 * @post | getWorld() == null || getWorld().getEntities().contains(this)
-	 * @post | getWorld() == null || getWorld().giveEntityGrid().isValidPosition(getPosition())
+	 * @post | getWorld() == null ||  Point.isWithin(getPosition(),getWorld().getWidth(),getWorld().getHeight())
      */
     Shelter(World world, Point position, Orientation orientation)
     {

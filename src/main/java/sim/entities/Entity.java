@@ -22,7 +22,7 @@ import static util.Logic.*
  * | getWorld() ==null ||  getWorld().getEntities().contains(this)
  * @invar Entity positie komt overeen met hun positie in world
  * | getWorld() == null || getWorld().getEntityAt(getPosition()).equals(this)
- * @invar | getWorld() == null || getWorld().giveEntityGrid().isValidPosition(getPosition())
+ * @invar | getWorld() == null || Point.isWithin(getPosition(),getWorld().getWidth(),getWorld().getHeight())
  * @invar| getColor()!=null
  */
 public abstract class Entity
@@ -66,14 +66,15 @@ public abstract class Entity
 	 * @throws IllegalArgumentException | world != null && world.getEntityAt(position)!=null
 	 * @throws IllegalArgumentException | world != null && !world.entityGrid.isValidPosition(position)
 	 *  
-	 * @mutates_properties | this.getWorld(), world.giveEntityGrid()
+	 * @mutates_properties | this.getWorld()
+	 * also mutates world.giveEntityGrid() (this is a very slow operation and thus not documentated in a mutates)
 	 *  
 	 * @post | world == getWorld()
 	 * @post | getPosition().equals(position)
 	 * @post | getOrientation().equals(orientation)
 	 * @post | getMoveProbability()==moveProbability
 	 * @post | getWorld() == null || getWorld().getEntities().contains(this)
-	 * @post | getWorld() == null || getWorld().giveEntityGrid().isValidPosition(getPosition())
+	 * @post | getWorld() == null ||  Point.isWithin(getPosition(),getWorld().getWidth(),getWorld().getHeight())
 	 */
 	Entity(World world, Point position, Orientation orientation, int moveProbability)
     {
@@ -206,7 +207,9 @@ public abstract class Entity
     /**
      * The current position is set (if there is room) to current pos + current orientation.
      * Note: this method is not probabilistic
-     * @mutates_properties | getWorld().giveEntityGrid()
+     * 
+     * made to ignore by compiler because this is a slow operation
+     * mutates_properties  getWorld().giveEntityGrid()
      * @post | Logic.implies(getWorld().isFree(destination()),getPosition().equals(destination()))
      * 
      * @post | old(getWorld()) == getWorld()

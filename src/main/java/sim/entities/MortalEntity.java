@@ -19,7 +19,7 @@ import util.Point;
  * | getWorld() ==null ||  getWorld().getEntities().contains(this)
  * @invar Entity positie komt overeen met hun positie in world
  * | getWorld() == null || getWorld().getEntityAt(getPosition()).equals(this)
- * @invar | getWorld() == null || getWorld().giveEntityGrid().isValidPosition(getPosition())
+ * @invar | getWorld() == null ||  Point.isWithin(getPosition(),getWorld().getWidth(),getWorld().getHeight())
  * @invar| getColor()!=null
  */
 public abstract class MortalEntity extends Entity
@@ -40,7 +40,8 @@ public abstract class MortalEntity extends Entity
 	 * @throws IllegalArgumentException | world != null && world.getEntityAt(position)!=null
 	 * @throws IllegalArgumentException | world != null && !world.entityGrid.isValidPosition(position)
 	 *  
-	 * @mutates_properties | this.getWorld(), world.giveEntityGrid()
+	 * @mutates_properties | this.getWorld()
+	 * also mutates world.giveEntityGrid() (this is a very slow operation and thus not documentated in a mutates)
 	 *  
 	 * @post | world == getWorld()
 	 * @post | getPosition().equals(position)
@@ -49,7 +50,7 @@ public abstract class MortalEntity extends Entity
 	 * 
 	 * @post | isDead() == false
 	 * @post | getWorld() == null || getWorld().getEntities().contains(this)
-	 * @post | getWorld() == null || getWorld().giveEntityGrid().isValidPosition(getPosition())
+	 * @post | getWorld() == null ||  Point.isWithin(getPosition(),getWorld().getWidth(),getWorld().getHeight())
      */
     MortalEntity(World world, Point position, Orientation orientation, int moveProbability)
     {
@@ -65,8 +66,9 @@ public abstract class MortalEntity extends Entity
 	boolean isAlivePkg() { return !dead; }
 
     /**
-     * @mutates_properties | old(getWorld()).giveEntityGrid(),this.getWorld()
-     * 
+     * @mutates_properties | this.getWorld()
+     * also mutates old(getWorld()).giveEntityGrid() (this is a very slow operation and thus not documentated in a mutates)
+	 *  
      * @post | isDead()
      * @post Entity is no part of world anymore| !old(getWorld()).giveEntityStream().anyMatch(ent->ent==this)
      * @post | getWorld()==null

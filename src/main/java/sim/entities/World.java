@@ -150,7 +150,8 @@ public class World
 
 	/**
 	 * @pre | position != null
-	 * @post | result == giveEntityGrid().isValidPosition(position)
+	 * @post | result == Point.isWithin(position,getWidth(),getHeight())
+	 * this is very slow: giveEntityGrid().isValidPosition(position)
 	 */
 	public boolean isInside(Point position)
 	{
@@ -171,9 +172,9 @@ public class World
 	}
 
 	/**
-	 * @pre | this.giveEntityGrid().isValidPosition(position)
+	 * @pre | isInside(position)
 	 * 
-	 * @post | (result==null &&this.giveEntityGrid().at(position)==null ) || result.equals(this.giveEntityGrid().at(position))
+	 * @post | (result==null &&this.getEntityAt(position)==null ) || result.equals(this.getEntityAt(position))
 	 */
 	public Entity getEntityAt(Point position)
 	{
@@ -221,18 +222,19 @@ public class World
 	 * @pre| position != null
 	 * @pre| orientation != null
 	 * @pre positie is vrij | this.getEntityAt(position)==null
-	 * @pre | this.giveEntityGrid().isValidPosition(position)
+	 * @pre | this.isInside(position)
 	 *  ??MOET DIT ERBIJ: throws IllegalArgumentException | Constants.HUNTER_MOVE_PROBABILITY < 0 || Constants.HUNTER_MOVE_PROBABILITY> 100
 	 *
 	 * @creates | result
-	 * @mutates_properties | this.giveEntityStream(), this.getHunters(), this.giveEntityGrid()
+	 * @mutates_properties | this.giveEntityStream(), this.getHunters()
+	 * This is also mutated but not included because its slow:  this.giveEntityGrid()
 	 *
 	 * @post | result.getWorld() == this
 	 * @post | result.getPosition().equals(position)
 	 * @post | result.getOrientation().equals(orientation)
 	 * @post | result.getMoveProbability()==Constants.HUNTER_MOVE_PROBABILITY
 	 * @post | this.getEntities().contains(result)
-	 * @post | this.giveEntityGrid().isValidPosition(result.getPosition())
+	 * @post | isInside(result.getPosition())
 	 * 
 	 * @post The hunter will have Constants.HUNTER_INITIAL_APPETITE appetite
 	 */
@@ -255,10 +257,11 @@ public class World
 	 * @pre | orientation != null
 	 * MOET DIT?  throws IllegalArgumentException | Constants.SHELTER_MOVE_PROBABILITY < 0 || Constants.SHELTER_MOVE_PROBABILITY > 100
 	 * @pre |  this.getEntityAt(position)==null
-	 * @pre |  this.giveEntityGrid().isValidPosition(position)
+	 * @pre | this.isInside(position)
 	 * 
 	 * @creates | result
-	 * @mutates_properties | this.giveEntityStream(), this.giveEntityGrid()
+	 *  @mutates_properties | this.giveEntityStream(), this.getHunters()
+	 * This is also mutated but not included because its slow:  this.giveEntityGrid()
 	 *
 	 * @post | result.getInhabitants() != null
      * @post | this == result.getWorld()
@@ -267,7 +270,7 @@ public class World
 	 * @post | result.getMoveProbability()== Constants.SHELTER_MOVE_PROBABILITY
 	 * @post | result.isDead() == false
 	 * @post | this.getEntities().contains(result)
-	 * @post | this.giveEntityGrid().isValidPosition(result.getPosition())
+	 * @post | isInside(result.getPosition())
 	 */
 	public Shelter createShelter(Point position, Orientation orientation)
 	{

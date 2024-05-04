@@ -70,7 +70,9 @@ public class Hunter extends Entity
 	 *  ??MOET DIT ERBIJ: throws IllegalArgumentException | Constants.HUNTER_MOVE_PROBABILITY < 0 || Constants.HUNTER_MOVE_PROBABILITY> 100
 	 *
 	 *
-	 * @mutates_properties | this.getWorld(), world.giveEntityGrid()
+	 * @mutates_properties | this.getWorld()
+	 * also mutates world.giveEntityGrid() (this is a very slow operation and thus not documentated in a mutates)
+	 *  
 	 * 
 	 * @post | world == getWorld()
 	 * @post | getPosition().equals(position)
