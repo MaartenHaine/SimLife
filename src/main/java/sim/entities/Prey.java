@@ -11,11 +11,33 @@ import util.Orientation;
 import util.Point;
 import static util.Logic.*;
 
-
+/**
+ * @invar | getChromosome() !=null
+ * 
+ * Geen getter voor siblings
+ * @invar the siblings arrayList of a prey is not null, however it can be empty
+ * @invar every sibling in the siblings arrayList has this as sibling as well
+ * 
+ * @invar | getShelter() == null  || getShelter().getInhabitants().contains(this) 
+ *  
+ *  
+ * ENTITY INVARS 
+ * @invar | getPosition()!=null
+ * @invar | getOrientation() != null
+ * @invar | 0 <=getMoveProbability() && getMoveProbability()  <= 100
+ * @invar if an entity is in a world, the world contains that entity  
+ * | getWorld() ==null ||  getWorld().getEntities().contains(this)
+ * @invar Entity positie komt overeen met hun positie in world
+ * | getWorld() == null || getWorld().giveEntityGrid().at(this.getPosition())==this
+ * @invar | getWorld() == null || getWorld().giveEntityGrid().isValidPosition(getPosition())
+ * @invar| getColor()!=null
+ */
 public class Prey extends MortalEntity
 {
 	
-
+	/**
+	 * @invar | chromosome !=null
+	 */
 	private final Chromosome chromosome;
 
 	/**
@@ -43,23 +65,37 @@ public class Prey extends MortalEntity
 
 	private void performTurn()
 	{
-
+		/*if it outputs a value less than `-333`, the prey turns clockwise.
+		 *if it outputs a value greater than `333`, the prey turns counterclockwise.
+		 *for other values, the prey does not turn.
+		 */
+		int valTurn = neuralNetwork.getTurnNeuron().computeOutput(this);
+		if(valTurn<-333) {
+			super.turnClockwise();
+		}else if(valTurn>333){
+			super.turnCounterclockwise();		
+		}
 	}
 
 	private void performMove()
 	{
-
+		//moveForward checks if the position is free
+		if (neuralNetwork.getMoveForwardNeuron().computeOutput(this)>0) {moveForward();}
 	}
 	
 
 
 	/**
+	 * @invar | siblings != null
+	 * @invar | siblings.stream().allMatch(ent-> ent==null || ent.siblings.contains(this))
+	 * 
 	 * @peerObjects
 	 * @representationObject
 	 */
     final ArrayList<Prey> siblings;
 
     /**
+     * @invar | shelter == null  || shelter.inhabitants.contains(this)
      * @peerObject
      */
     Shelter shelter;
@@ -68,13 +104,53 @@ public class Prey extends MortalEntity
     
 
     
-
+    /**
+     * @post | result == true
+     */
     @Override
 	boolean isPreyPkg()
 	{
 	    return true;
 	}
-
+	/**
+	 * 
+	 * @throws IllegalArgumentException | world == null
+	 * @throws IllegalArgumentException | chromosome == null
+	 * @throws IllegalArgumentException | shelter == null
+	 * 
+     * @mutates_properties | shelter.getInhabitants(), this.getShelter()
+	 * 
+	 * @post | getChromosome().equals(chromosome)
+	 * @post | getChromosome() != null
+	 * @post | getShelter()==shelter
+	 * @post the neural Network of prey is created based upon the chromosome
+	 * @post score of the prey is zero
+	 * @post the siblings arrayList of a prey is not null, however it can be empty
+	 * @post every sibling in the siblings arrayList has this as sibling as well
+	 * @post | getShelter() == null  || getShelter().getInhabitants().contains(this) 
+	 *  
+	 * 
+	 * 
+	 * ENTITY ALGEMEEN
+	 * World mag null zijn wt peer object
+	 * @throws IllegalArgumentException | position == null
+	 * @throws IllegalArgumentException | orientation == null
+  ??MOET DIT ERBIJ: throws IllegalArgumentException | Constants.HUNTER_MOVE_PROBABILITY < 0 || Constants.HUNTER_MOVE_PROBABILITY> 100
+	 *
+	 * @throws IllegalArgumentException | world != null && world.getEntityAt(position)!=null
+	 * @throws IllegalArgumentException | world != null && !world.entityGrid.isValidPosition(position)
+	 *  
+	 * @mutates_properties | this.getWorld(), world.giveEntityGrid()
+	 *  
+	 * @post | world == getWorld()
+	 * @post | getPosition().equals(position)
+	 * @post | getOrientation().equals(orientation)
+	 * @post | getMoveProbability()==Constants.PREY_MOVE_PROBABILITY
+	 * @post | getWorld() == null || getWorld().getEntities().contains(this)
+	 * @post | getWorld() == null || getWorld().giveEntityGrid().isValidPosition(getPosition())
+	 * 
+	 * @post | isDead() == false
+	 */
 	Prey(World world, Shelter shelter, Chromosome chromosome, Point position, Orientation orientation)
     {
         super(world, position, orientation, Constants.PREY_MOVE_PROBABILITY);
@@ -89,35 +165,84 @@ public class Prey extends MortalEntity
         this.shelter = shelter;
         this.chromosome = chromosome;
         this.neuralNetwork = NeuralNetwork.fromChromosome(chromosome);
+        // makes copy of inhabitants array
         this.siblings = this.shelter.getInhabitants();
         this.score = 0;
 
-        //todo: link with siblings and shelter
+        //NEW
+        
+        for (Prey sib : siblings) {
+        	sib.siblings.add(this);
+        }
+        
+        shelter.inhabitants.add(this);
     }
-
+	/**
+     * @post | result == false
+     */
     @Override
 	boolean isHunterPkg()
 	{
 	    return false;
 	}
-
+	/**
+     * @post | result == false
+     */
 	@Override
 	boolean isShelterPkg()
 	{
 	    return false;
 	}
 
+	
+    /**
+     * @mutates_properties | old(getWorld()).giveEntityGrid(),this.getWorld()
+     * @mutates_properties | old(shelter).getInhabitants(), this.getShelter()
+     * @mutates_properties siblings field of this and siblings field of the siblings that were in this' siblings field
+     * 
+     * @post no occurences of died entity in siblings 
+     * | !old(siblings).stream().anyMatch(ent -> ent.equals(this))
+     * @post no occurences of died entity in shelter inhabitants 
+     * | !old(shelter).inhabitants.stream().anyMatch(ent -> ent.equals(this))
+     * @post shelter reference is removed
+     * | shelter == null
+     * @post siblings list is cleared
+     * |  siblings.stream().allMatch(sib->sib==null)
+     * 
+     * @post | old(getChromosome()).equals(getChromosome())
+     * 
+     * SUPER:
+     * @post | isDead()
+     * @post Entity is no part of world anymore| !old(getWorld()).giveEntityStream().anyMatch(ent->ent==this)
+     * @post | getWorld()==null
+     */
 	@Override
 	void diePkg()
 	{
-
+	    super.diePkg();
+	    
+	    //remove this from the siblings list of the siblings
+	    for(Prey sib: siblings) {
+	    	sib.siblings.remove(this);
+	    }
+	    //remove this from the inhabitants list of the shelter
+	    shelter.inhabitants.remove(this);
+	    
+	    //clear the siblings and shelter fields
+	    siblings.clear();
+	    shelter = null;
+	    
 	}
+	
 
 	public Chromosome getChromosome()
     {
         return this.chromosome;
     }
 
+	/**
+	 * @post | result.equals(Color.GREEN)
+	 */
     public Color getColor()
     {
         return Color.GREEN;
@@ -129,6 +254,12 @@ public class Prey extends MortalEntity
     }
 
 
+    /**
+     * @post if the turn neuron outputs a value higher that 333 the prey will turn counter clockwise, if it returns a value lower than -333 the prey will turn clockwise
+     *  else it will not move
+     * @post if the move forward neuron outputs a value strictly greater than zero, the prey will move forward in the direction of its orientation if possibke
+     * @post if the preys distance of the shelter is bigger than Constants.SHELTER_SURVIVAL_DISTANCE, the prey's score will decrease by one else it will increase by one
+     */
     @Override
     public void performActionIfAlive()
     {
@@ -152,17 +283,30 @@ public class Prey extends MortalEntity
                 && (this.getChromosome().isEqual(other.getChromosome()));
     }
 
-
+    /**
+     * 
+     * @post returns true when this score is strictly greater than zero
+     */
     public boolean survives()
     {
+    	/* OLD
     	return false;
+    	*/
+    	return score>0;
     }
 
+    /**
+     * 
+     * @post | result==getShelter().getPosition().distanceSquared(this.getPosition())
+     */
     public int distanceSquaredToShelter()
     {
-        return 0;
+        return shelter.getPosition().distanceSquared(this.getPosition());
     }
 
+    /**
+     * @post | result.equals(String.format("Prey(position=%s)", this.getPosition()))
+     */
     @Override
     public String toString()
     {

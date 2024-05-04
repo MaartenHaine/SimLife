@@ -69,6 +69,9 @@ public class Hunter extends Entity
 	 * @throws IllegalArgumentException | world != null && !world.entityGrid.isValidPosition(position)
 	 *  ??MOET DIT ERBIJ: throws IllegalArgumentException | Constants.HUNTER_MOVE_PROBABILITY < 0 || Constants.HUNTER_MOVE_PROBABILITY> 100
 	 *
+	 *
+	 * @mutates_properties | this.getWorld(), world.giveEntityGrid()
+	 * 
 	 * @post | world == getWorld()
 	 * @post | getPosition().equals(position)
 	 * @post | getOrientation().equals(orientation)
@@ -88,13 +91,15 @@ public class Hunter extends Entity
 	/**
 	 * @throws IllegalArgumentException | shelter == null
 	 * @throws IllegalArgumentException | appetite < 0
-	 * 
+	 * 	
 	 *  via super: (je moet deze ook hier vermelden zie modelopl it 2 
 	 * @throws IllegalArgumentException | position == null
 	 * @throws IllegalArgumentException | orientation == null
 	 * @throws IllegalArgumentException | world != null && world.getEntityAt(position)!=null
 	 * @throws IllegalArgumentException | world != null && !world.entityGrid.isValidPosition(position)
 	 *  ??MOET DIT ERBIJ: throws IllegalArgumentException | Constants.HUNTER_MOVE_PROBABILITY < 0 || Constants.HUNTER_MOVE_PROBABILITY> 100
+	 *
+	 * @mutates_properties | this.getWorld(), world.giveEntityGrid()
 	 *
 	 * @post | world == getWorld()
 	 * @post | getPosition().equals(position)

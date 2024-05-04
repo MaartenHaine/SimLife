@@ -9,7 +9,7 @@ import util.Point;
  * Upon death, the entity removes itself from the world.
  * 
  * @invar | Logic.implies(isDead(),getWorld()==null)
- * @invar | Logic.implies(!isDead(),getWorld().getEntities().contains(this))
+ * @invar | Logic.implies(!isDead(),getWorld() !=null && getWorld().getEntities().contains(this))
  *  
  * ENTITY INVARS: 
  * @invar | getPosition()!=null
@@ -26,7 +26,7 @@ public abstract class MortalEntity extends Entity
 {
 	/**
 	 * @invar | Logic.implies(dead,world==null)
-	 * @invar | Logic.implies(!dead,world.getEntities().contains(this))
+	 * @invar | Logic.implies(!dead,world!=null && world.getEntities().contains(this))
 	 */
     private boolean dead;
     
@@ -39,6 +39,8 @@ public abstract class MortalEntity extends Entity
 	 * @throws IllegalArgumentException | moveProbability < 0 || moveProbability> 100
 	 * @throws IllegalArgumentException | world != null && world.getEntityAt(position)!=null
 	 * @throws IllegalArgumentException | world != null && !world.entityGrid.isValidPosition(position)
+	 *  
+	 * @mutates_properties | this.getWorld(), world.giveEntityGrid()
 	 *  
 	 * @post | world == getWorld()
 	 * @post | getPosition().equals(position)
@@ -63,6 +65,8 @@ public abstract class MortalEntity extends Entity
 	boolean isAlivePkg() { return !dead; }
 
     /**
+     * @mutates_properties | old(getWorld()).giveEntityGrid(),this.getWorld()
+     * 
      * @post | isDead()
      * @post Entity is no part of world anymore| !old(getWorld()).giveEntityStream().anyMatch(ent->ent==this)
      * @post | getWorld()==null

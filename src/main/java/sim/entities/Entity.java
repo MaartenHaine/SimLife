@@ -16,7 +16,6 @@ import static util.Logic.*
  * An entity has a color.
  * 
  * @invar | getPosition()!=null
-
  * @invar | getOrientation() != null
  * @invar | 0 <=getMoveProbability() && getMoveProbability()  <= 100
  * @invar if an entity is in a world, the world contains that entity  
@@ -66,6 +65,8 @@ public abstract class Entity
 	 * @throws IllegalArgumentException | moveProbability < 0 || moveProbability> 100
 	 * @throws IllegalArgumentException | world != null && world.getEntityAt(position)!=null
 	 * @throws IllegalArgumentException | world != null && !world.entityGrid.isValidPosition(position)
+	 *  
+	 * @mutates_properties | this.getWorld(), world.giveEntityGrid()
 	 *  
 	 * @post | world == getWorld()
 	 * @post | getPosition().equals(position)
