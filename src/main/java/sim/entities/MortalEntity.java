@@ -18,7 +18,7 @@ import util.Point;
  * @invar if an entity is in a world, the world contains that entity  
  * | getWorld() ==null ||  getWorld().getEntities().contains(this)
  * @invar Entity positie komt overeen met hun positie in world
- * | getWorld() == null || getWorld().giveEntityGrid().at(this.getPosition())==this
+ * | getWorld() == null || getWorld().getEntityAt(getPosition()).equals(this)
  * @invar | getWorld() == null || getWorld().giveEntityGrid().isValidPosition(getPosition())
  * @invar| getColor()!=null
  */

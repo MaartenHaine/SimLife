@@ -21,7 +21,7 @@ import static util.Logic.*
  * @invar if an entity is in a world, the world contains that entity  
  * | getWorld() ==null ||  getWorld().getEntities().contains(this)
  * @invar Entity positie komt overeen met hun positie in world
- * | getWorld() == null || getWorld().giveEntityGrid().at(this.getPosition())==this
+ * | getWorld() == null || getWorld().getEntityAt(getPosition()).equals(this)
  * @invar | getWorld() == null || getWorld().giveEntityGrid().isValidPosition(getPosition())
  * @invar| getColor()!=null
  */
@@ -244,7 +244,7 @@ public abstract class Entity
     	if(RandomUtil.unfairBool(moveProbability)) {moveForward();}
     }
     /**
-     * @post | old(getWorld()) == getWorld()
+     * @post | old(getWorld()).equals(getWorld())
 	 * @post | getMoveProbability()==old(getMoveProbability())
      */
     public abstract void performAction();

@@ -33,7 +33,7 @@ import static util.Logic.*;
  * | getWorld() ==null ||  getWorld().getEntities().contains(this)
  * @invar Entity positie komt overeen met hun positie in world
  * | getWorld() == null || getWorld().giveEntityGrid().at(this.getPosition())==this
- * @invar | getWorld() == null || getWorld().giveEntityGrid().isValidPosition(getPosition())
+ * @invar | getWorld() == null ||  Point.isWithin(getPosition(),getWorld().getWidth(),getWorld().getHeight())
  * @invar| getColor()!=null
  */
 public class Prey extends MortalEntity
@@ -144,14 +144,16 @@ public class Prey extends MortalEntity
 	 * @throws IllegalArgumentException | world != null && world.getEntityAt(position)!=null
 	 * @throws IllegalArgumentException | world != null && !world.entityGrid.isValidPosition(position)
 	 *  
-	 * @mutates_properties | this.getWorld(), world.giveEntityGrid()
+	 * @mutates_properties | this.getWorld()
+	 * also mutates world.giveEntityGrid() (this is a very slow operation and thus not documentated in a mutates)
+	 *   
 	 *  
 	 * @post | world == getWorld()
 	 * @post | getPosition().equals(position)
 	 * @post | getOrientation().equals(orientation)
 	 * @post | getMoveProbability()==Constants.PREY_MOVE_PROBABILITY
 	 * @post | getWorld() == null || getWorld().getEntities().contains(this)
-	 * @post | getWorld() == null || getWorld().giveEntityGrid().isValidPosition(getPosition())
+	 * @post | getWorld() == null ||  Point.isWithin(getPosition(),getWorld().getWidth(),getWorld().getHeight())
 	 * 
 	 * @post | isDead() == false
 	 */
@@ -200,7 +202,10 @@ public class Prey extends MortalEntity
 
 	
     /**
-     * @mutates_properties | old(getWorld()).giveEntityGrid(),this.getWorld()
+     * @mutates_properties | this.getWorld()
+     * also mutates old(getWorld()).giveEntityGrid() (this is a very slow operation and thus not documentated in a mutates)
+	 *  
+     * 
      * @mutates_properties | old(shelter).getInhabitants(), this.getShelter()
      * @mutates_properties siblings field of this and siblings field of the siblings that were in this' siblings field
      * 

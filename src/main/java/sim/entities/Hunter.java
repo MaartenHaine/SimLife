@@ -21,8 +21,8 @@ import util.RandomUtil;
  * @invar if an entity is in a world, the world contains that entity  
  * | getWorld() ==null ||  getWorld().getEntities().contains(this)
  * @invar Entity positie komt overeen met hun positie in world
- * | getWorld() == null || getWorld().giveEntityGrid().at(this.getPosition())==this
- * @invar | getWorld() == null || getWorld().giveEntityGrid().isValidPosition(getPosition())
+ * | getWorld() == null || getWorld().getEntityAt(getPosition()).equals(this)
+ * @invar | getWorld() == null || Point.isWithin(getPosition(),getWorld().getWidth(),getWorld().getHeight())
  * @invar| getColor()!=null
  * 
  */
@@ -77,7 +77,7 @@ public class Hunter extends Entity
 	 * @post | getOrientation().equals(orientation)
 	 * @post | getMoveProbability()==Constants.HUNTER_MOVE_PROBABILITY
 	 * @post | getWorld() == null || getWorld().getEntities().contains(this)
-	 * @post | getWorld() == null || getWorld().giveEntityGrid().isValidPosition(getPosition())
+	 * @post | getWorld() == null || Point.isWithin(getPosition(),getWorld().getWidth(),getWorld().getHeight())
 	 * 
 	 * @post The hunter will have Constants.HUNTER_INITIAL_APPETITE appetite
 	 * 
@@ -106,7 +106,7 @@ public class Hunter extends Entity
 	 * @post | getOrientation().equals(orientation)
 	 * @post | getMoveProbability()==Constants.HUNTER_MOVE_PROBABILITY
 	 * @post | getWorld() == null || getWorld().getEntities().contains(this)
-	 * @post | getWorld() == null || getWorld().giveEntityGrid().isValidPosition(getPosition())
+	 * @post | getWorld() == null || getWorld().entityGrid.isValidPosition(getPosition())
 	 * 
 	 * @post The hunter will have an appetite as is given as argument
 	 */
