@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.stream.Stream;
 
 import sim.Chromosome;
+import sim.Constants;
 import util.Grid;
 import util.Logic;
 import util.Orientation;
@@ -17,6 +18,11 @@ import static util.Logic.*
  * | giveEntityGrid().givePositionStream().map(pos -> giveEntityGrid().at(pos)).allMatch(ent-> ent==null ||ent.getWorld()==this)
  * @invar Entity posities komen overeen met hun posities in world
  * | giveEntityGrid().givePositionStream().allMatch(pos -> giveEntityGrid().at(pos)==null ||giveEntityGrid().at(pos).getPosition().equals(pos))
+ * @invar | getHunters() != null
+ * @invar the shelter that hunter is focused on is in World
+ * @invar Every hunter is in the entityGrid 
+ * | getHunters().stream().allMatch(h ->  giveEntityGrid().givePositionStream().map(pos ->  giveEntityGrid().at(pos)).anyMatch(e-> e.equals(h)))
+ * 
  */
 public class World
 {
@@ -42,7 +48,10 @@ public class World
 	final Grid<Entity> entityGrid;
 	
 	/**
-	 *
+	 * @invar | hunters != null
+	 * @invar | hunters.stream().allMatch(hunt -> hunt ==null || this.entityGrid.givePositionStream().map(pos -> this.entityGrid.at(pos)).anyMatch(ent-> ent.equals(hunt.shelter)))
+	 * @invar Every hunter is in the entityGrid | hunters.stream().allMatch(h -> entityGrid.givePositionStream().map(pos -> entityGrid.at(pos)).anyMatch(e-> e.equals(h)))
+	 * 
 	 * @representationObject
 	 * @peerObjects
 	 */
@@ -59,28 +68,44 @@ public class World
 
 	/**
 	 * Creates a new world with zero entities in it.
-	 * 
+	 * @throws IllegalArgumentException
+	 *   | width <= 0 || height <= 0
+	 * @post | giveEntityGrid().getWidth() == width && getWidth() == width
+	 * @post | giveEntityGrid().getHeight() == height && getHeight() == height
+	 * @post | givePositionStream().allMatch(p -> giveEntityGrid().at(p) == null)
 	 */
 	public World(int width, int height)
 	{
+		/* OLD
 		this.entityGrid = null;
 		this.hunters = null;
+		*/
+		this.entityGrid = new Grid<Entity>(width,height);
+		this.hunters = new ArrayList<Hunter>();
+		
 	}
 
 	public int getWidth()
 	{
-		return 0;
+		//OLD return 0;
+		return entityGrid.getWidth();
 	}
 
 
 	public int getHeight()
 	{
-		return 0;
+		//OLD return 0;
+		return entityGrid.getWidth();
 	}
 
 	/**
 	 * Returns all entities inhabiting the world.
 	 * 
+	 * !this copies every entity
+	 * @creates | result
+	 * @creates | result,... result
+	 * @post| result!=null
+	 * @post | result.stream().allMatch(ent1-> giveEntityStream().anyMatch(ent2->ent2.equals(ent1)))
 	 */
 	public List<Entity> getEntities()
 	{
@@ -109,14 +134,19 @@ public class World
 
 	/**
 	 * Number of entities currently in the world
-	 * 
+	 * @post | result == giveEntityStream().count()
 	 */
 	public long numberOfEntities()
 	{
-		return 0;
+		//OLD return 0;
+		return giveEntityStreamPriv().count();
 	}
 
 
+	/**
+	 * @pre | position != null
+	 * @post | result == giveEntityGrid().isValidPosition(position)
+	 */
 	public boolean isInside(Point position)
 	{
 		return this.entityGrid.isValidPosition(position);
@@ -135,20 +165,28 @@ public class World
 				|| pos.getY() == getHeight() - 1);
 	}
 
-	
+	/**
+	 * @pre | this.giveEntityGrid().isValidPosition(position)
+	 * 
+	 * @post | result.equals(this.giveEntityGrid().at(position))
+	 */
 	public Entity getEntityAt(Point position)
 	{
-		return null;
+		// old
+		//return null;
+		return this.entityGrid.at(position);
 	}
 
 	/**
 	 * true iff position is inside the world and no creature sits there
 	 *
 	 * @pre | position != null
+	 * @post | result == this.isInside(position) && getEntityAt(position)==null
 	 */
 	public boolean isFree(Point position)
-	{
-		return true;
+	{	// old
+		//return true;
+		return this.isInside(position) && getEntityAt(position)==null;
 	}
 
 	/**
@@ -171,17 +209,69 @@ public class World
 	}
 
 
+
+	/**
+	 * @pre| shelter != null
+	 * 
+	 * @pre| position != null
+	 * @pre| orientation != null
+	 * @pre positie is niet vrij | this.getEntityAt(position)!=null
+	 * @pre | ! this.giveEntityGrid().isValidPosition(position)
+	 *  ??MOET DIT ERBIJ: throws IllegalArgumentException | Constants.HUNTER_MOVE_PROBABILITY < 0 || Constants.HUNTER_MOVE_PROBABILITY> 100
+	 *
+	 * @creates | result
+	 * @mutates_properties | this.giveEntityStream(), this.getHunters(), this.giveEntityGrid()
+	 *
+	 * @post | result.getWorld() == this
+	 * @post | result.getPosition().equals(position)
+	 * @post | result.getOrientation().equals(orientation)
+	 * @post | result.getMoveProbability()==Constants.HUNTER_MOVE_PROBABILITY
+	 * @post | result.getWorld().getEntities().contains(result)
+	 * @post | result.getWorld().giveEntityGrid().isValidPosition(result.getPosition())
+	 * 
+	 * @post The hunter will have Constants.HUNTER_INITIAL_APPETITE appetite
+	 */
 	public Hunter createHunter(Shelter shelter, Point position, Orientation orientation)
 	{
+		/*OLD
 		var hunter = new Hunter(this, shelter, position, orientation);
 		this.entityGrid.setAt(position, hunter);
+		return hunter;
+		*/
+		var hunter = new Hunter(this, shelter, position, orientation);
+		this.entityGrid.setAt(position, hunter);
+		hunters.add(hunter); //THIS WAS FLAWED IN OLD IMPL
 		return hunter;
 	}
 
 
+	/**
+	 * @pre | position != null
+	 * @pre | orientation != null
+	 * MOET DIT?  throws IllegalArgumentException | Constants.SHELTER_MOVE_PROBABILITY < 0 || Constants.SHELTER_MOVE_PROBABILITY > 100
+	 * @pre |  this.getEntityAt(position)!=null
+	 * @pre |  !this.giveEntityGrid().isValidPosition(position)
+	 * 
+	 * @creates | result
+	 * @mutates_properties | this.giveEntityStream(), this.giveEntityGrid()
+	 *
+	 * @post | result.getInhabitants() != null
+     * @post | this == result.getWorld()
+	 * @post | result.getPosition().equals(position)
+	 * @post | result.getOrientation().equals(orientation)
+	 * @post | result.getMoveProbability()== Constants.SHELTER_MOVE_PROBABILITY
+	 * @post | result.isDead() == false
+	 * @post | result.getWorld().getEntities().contains(result)
+	 * @post | result.getWorld().giveEntityGrid().isValidPosition(result.getPosition())
+	 */
 	public Shelter createShelter(Point position, Orientation orientation)
 	{
-		return null;
+		//OLD
+		//return null;
+		Shelter shelter = new Shelter(this,position,orientation);
+		this.entityGrid.setAt(position, shelter);
+		
+		return shelter;
 	}
 
 	/**
@@ -221,7 +311,16 @@ public class World
 		return giveEntityStreamPriv();
 	}
 	
+	/**
+	 * @creates | result 
+	 * @post | result.givePositionStream().equals(givePositionStream())
+	 * @post | result.givePositionStream().map(pos -> result.at(pos)).filter(entity -> entity != null).equals(giveEntityStream())
+	 */
 	public Grid<Entity> giveEntityGrid() {
-		return entityGrid;
+		// OLD
+		//return entityGrid;
+		
+		//Shallow copy
+		return entityGrid.giveCopy();
 	}
 }
