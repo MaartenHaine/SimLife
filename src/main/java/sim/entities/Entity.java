@@ -33,7 +33,7 @@ public abstract class Entity
 	 * @invar Entity positie komt overeen met hun positie in world
 	 * | world == null || world.entityGrid.at(position)==this	
 	 * @invar | position !=null
-	 * @invar | world == null || world.entityGrid.isValidPosition(getPosition())
+	 * @invar | world == null || world.entityGrid.isValidPosition(position)
 	 */
     private Point position;
     

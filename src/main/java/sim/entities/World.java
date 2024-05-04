@@ -174,7 +174,7 @@ public class World
 	/**
 	 * @pre | isInside(position)
 	 * 
-	 * @post | (result==null &&this.getEntityAt(position)==null ) || result.equals(this.getEntityAt(position))
+	 * @post | result==null  || result.getPosition().equals(position)
 	 */
 	public Entity getEntityAt(Point position)
 	{
@@ -326,8 +326,8 @@ public class World
 	 * @post | result.getHeight() == this.getHeight()
 	 * @post the result equals the grid that the world uses 
 	// * these give stackoverflow errors 
-	 //* post  result.givePositionStream().allMatch(ent1->(givePositionStream().anyMatch(ent2-> ent1.equals(ent2))))
-	 //* post  result.givePositionStream().map(pos -> result.at(pos)).filter(entity -> entity != null).allMatch(ent1->giveEntityStream().anyMatch(ent2-> ent1.equals(ent2)))
+	 // post  result.givePositionStream().allMatch(ent1->(givePositionStream().anyMatch(ent2-> ent1.equals(ent2))))
+	 // post  result.givePositionStream().map(pos -> result.at(pos)).filter(entity -> entity != null).allMatch(ent1->giveEntityStream().anyMatch(ent2-> ent1.equals(ent2)))
 	 */
 	public Grid<Entity> giveEntityGrid() {
 		// OLD

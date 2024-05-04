@@ -40,7 +40,7 @@ public class Shelter extends MortalEntity
     final ArrayList<Prey> inhabitants;
 
     /**
-     * @post | getInhabitants() != null
+     * 
      *  
 	 * via super: (je moet deze ook hier vermelden zie modelopl it 2 
 	 * @throws IllegalArgumentException | position == null
@@ -60,6 +60,8 @@ public class Shelter extends MortalEntity
 	 * @post | isDead() == false
 	 * @post | getWorld() == null || getWorld().getEntities().contains(this)
 	 * @post | getWorld() == null ||  Point.isWithin(getPosition(),getWorld().getWidth(),getWorld().getHeight())
+     * 
+     * @post | getInhabitants() != null
      */
     Shelter(World world, Point position, Orientation orientation)
     {
