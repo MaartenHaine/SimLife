@@ -11,12 +11,25 @@ import util.Orientation;
 public class NeuralNetwork
 {
 
+	/**
+	 * @representationObject
+	 * @invar | inputLayerNeurons != null
+	 * @invar | Arrays.stream(inputLayerNeurons).allMatch(n -> n != null) 
+	 */
 
     private final SensorNeuron[] inputLayerNeurons;
 
+    /**
+     * @invar | moveForwardNeuron != null
+     * @invar | moveForwardNeuron.getDependencies().stream().allMatch(dep -> Arrays.stream(inputLayerNeurons).anyMatch(sensor -> dep.getFirst() == sensor))
+     */
 
     private final ActivationFunctionNeuron moveForwardNeuron;
-    
+    	
+    /**
+     * @invar | turnNeuron != null
+     * @invar | turnNeuron.getDependencies().stream().allMatch( dep -> Arrays.stream(inputLayerNeurons).anyMatch(sensor -> dep.getFirst() == sensor))
+     */
 	private final ActivationFunctionNeuron turnNeuron;
 
 	/**
@@ -27,24 +40,55 @@ public class NeuralNetwork
 	 */
     public NeuralNetwork()
     {
-    	inputLayerNeurons = null;
-    	moveForwardNeuron = null;
-    	turnNeuron = null;
+    	inputLayerNeurons = new SensorNeuron[] {
+    			new FreePassageSensorNeuron(Orientation.north()),
+        		new FreePassageSensorNeuron(Orientation.northWest()),
+        		new FreePassageSensorNeuron(Orientation.northEast()),
+        		new HunterSensor(),
+        		new ShelterSensor()
+    	};
+
+    	moveForwardNeuron = new LinearFunctionNeuron();
+    	turnNeuron = new LinearFunctionNeuron();
     }
+
+    /**
+     * @creates | result
+     * @post | result != null
+     * @post | Arrays.stream(result).allMatch(n -> n != null)
+     * @post | result.length == 5
+     */
 
 	public SensorNeuron[] getInputNeurons()
     {
-		return null;
+		return Arrays.copyOf(this.inputLayerNeurons, this.inputLayerNeurons.length);
     }
+
+    /**
+     * @creates | result
+     * @post | result != null
+     * @post | Arrays.stream(result).allMatch(n -> n != null)
+     * @post | result.length == 2
+     * @post | result[0] == getMoveForwardNeuron()
+     * @post | result[1] == getTurnNeuron()
+     */
 
     public ActivationFunctionNeuron[] getOutputNeurons()
     {
-        return null;
+        return new ActivationFunctionNeuron[] { getMoveForwardNeuron(), getTurnNeuron() };
     }
 
-    public ActivationFunctionNeuron getMoveForwardNeuron() { return null; }
+    /**
+     * @post | result != null
+     */
 
-    public ActivationFunctionNeuron getTurnNeuron() { return null; }
+    public ActivationFunctionNeuron getMoveForwardNeuron() { return this.moveForwardNeuron; }
+
+    /**
+     * @post | result != null
+     */
+
+    public ActivationFunctionNeuron getTurnNeuron() { return this.turnNeuron; }
 
     /**
      * LEGIT
