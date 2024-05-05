@@ -21,14 +21,12 @@ public class NeuralNetwork
 
     /**
      * @invar | moveForwardNeuron != null
-     * @invar | moveForwardNeuron.getDependencies().stream().allMatch(dep -> Arrays.stream(inputLayerNeurons).anyMatch(sensor -> dep.getFirst() == sensor))
      */
 
     private final ActivationFunctionNeuron moveForwardNeuron;
     	
     /**
      * @invar | turnNeuron != null
-     * @invar | turnNeuron.getDependencies().stream().allMatch( dep -> Arrays.stream(inputLayerNeurons).anyMatch(sensor -> dep.getFirst() == sensor))
      */
 	private final ActivationFunctionNeuron turnNeuron;
 

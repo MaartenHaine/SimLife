@@ -1,11 +1,11 @@
 package sim.neuralnet;
 
-import sim.entities.Prey;
+import sim.entities.*;
 
 public class HunterSensor extends BinarySensorNeuron {
 
 	@Override
 	public boolean detect(Prey prey) {
-		return false;
+		return prey.getWorld().hasHunterInCone(prey.getPosition(), prey.getOrientation());
 	}
 }
