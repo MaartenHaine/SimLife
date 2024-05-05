@@ -2,6 +2,7 @@ package sim;
 
 import static util.Logic.*;
 
+
 import java.util.Arrays;
 import java.util.ArrayList;
 import java.util.List;
@@ -12,7 +13,7 @@ import sim.entities.World;
 import util.Orientation;
 import util.Point;
 import util.RandomUtil;
-import util.Constants;
+import sim.Constants;
 import sim.entities.Prey;
 
 public class Simulation
@@ -34,6 +35,23 @@ public class Simulation
 
     private final int shelterCount;
     
+    
+    /**
+	 * Initializes a new simulation with the given parameters.
+	 * 
+	 * @param worldSize The size of the world
+	 * @param shelterCount The number of shelters
+	 * @param inhabitantsPerShelter The number of preys per shelter
+	 * @param huntersPerShelter The number of hunters per shelter
+	 * 
+	 * @pre | worldSize > 0
+	 * @pre | shelterCount > 0
+	 * @pre | inhabitantsPerShelter > 0
+	 * @pre | huntersPerShelter > 0
+	 * 
+	 * @post | getWorld() != null
+	 */
+
     public Simulation(int worldSize, int shelterCount, int inhabitantsPerShelter, int huntersPerShelter)
     {
     	this.worldSize = worldSize;
@@ -60,7 +78,12 @@ public class Simulation
 	 * For each shelter, inhabitantsPerShelter preys are added to the world, again with random positions and orientations.
 	 * Each prey is given one of the offspring chromosomes (each offspring chromosome is given to exactly one prey).
 	 * For each shelter, huntersPerShelter hunters are added to the world, with a random position and orientation.
+	 * @pre | chromosomes != null
+	 * @pre | chromosomes.size() == preyCount
 	 * 
+	 * @post | result.getPreys().size() == shelterCount*inhabitantsPerShelter
+	 * @post | result.getHunters().size() == shelterCount*huntersPerShelter
+	 * @post | result != null
 	 */
 	private World createRandomWorldWith(ArrayList<Chromosome> chromosomes)
 	{
@@ -71,25 +94,36 @@ public class Simulation
 		for (int i = 0; i < shelterCount; i++)
 		{
 			var shelter = world.createShelter(positions.get(i), Orientation.createRandom());
+			boolean bool2 = true;
+			boolean bool1 = true;
 			for (int j = 0; j < inhabitantsPerShelter; j++)
 			{
-				Point inhab_pos = positions.get(RandomUtil.integer(positions.size()));
-				if (world.isFree(inhab_pos))
-				{
-					var prey = world.createPrey(inhab_pos, Orientation.createRandom(), chromosomes.get(i*inhabitantsPerShelter+j));
+				
+				while(bool1) {
+					Point inhab_pos = positions.get(RandomUtil.integer(positions.size()));
+					if (world.isFree(inhab_pos))
+					{
+						var prey = world.createPrey(shelter, chromosomes.get(i*inhabitantsPerShelter+j), inhab_pos, Orientation.createRandom());
+						bool1 = false;
+					}
+
 				}
 			}
 			for (int j = 0; j < huntersPerShelter; j++)
 			{
-				Point hunter_pos = positions.get(RandomUtil.integer(positions.size()));
-				if (world.isFree(hunter_pos))
-				{
-					var hunter = world.createHunter(hunter_pos, Orientation.createRandom());
+				
+				while(bool2){
+					Point hunter_pos = positions.get(RandomUtil.integer(positions.size()));
+					if (world.isFree(hunter_pos))
+					{
+						var hunter = world.createHunter(shelter, hunter_pos, Orientation.createRandom());
+						bool2 = false;
+					}
+
 				}
 			}
+			
 		}
-
-
 		return world;
 	}
     
@@ -105,6 +139,9 @@ public class Simulation
     /**
      * Compute the list of surviving chromosomes, the list of offspring chromosomes,
      * and returns a new world based on that latter list.
+     * @inspects | getWorld()
+	 * @creates | getWorld()
+	 * @mutates | this
      */
     public void nextGeneration()
     {
@@ -112,7 +149,7 @@ public class Simulation
     	var survivingChromosomes = getSurvivingChromosomes();
     	var offspringChromosomes = computeOffspring(survivingChromosomes);
     	
-    	createRandomWorldWith(new ArrayList<>(offspringChromosomes));
+    	this.world = createRandomWorldWith(new ArrayList<>(offspringChromosomes));
     	
     }
     
@@ -146,6 +183,7 @@ public class Simulation
 	 * 
 	 * @post | result != null
 	 * @post | result.size() == preyCount
+	 * @post | result.stream().allMatch(c -> c != null)
      */
     private ArrayList<Chromosome> computeOffspring(ArrayList<Chromosome> parentGeneration)
     {	
