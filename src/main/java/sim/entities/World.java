@@ -33,7 +33,7 @@ public class World
 	private Stream<Entity> giveEntityStreamPriv()
 	{
 		return this.entityGrid.givePositionStream().map(pos -> this.entityGrid.at(pos))
-				.filter(entity -> entity != null);
+				.filter(entity -> entity != null).toList().stream();
 	}
 
 	/**
