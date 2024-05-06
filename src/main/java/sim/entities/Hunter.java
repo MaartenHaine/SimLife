@@ -55,6 +55,7 @@ public class Hunter extends Entity
 	/**
 	 * @invar | shelter != null
 	 * SHELTER KAN NIET NAAR HUNTER WIJZEN?
+	 * @invar | shelter.world.hunters.contains(this)
 	 * @peerObject
 	 */
 	final Shelter shelter;
@@ -92,7 +93,7 @@ public class Hunter extends Entity
 
 	/**
 	 * @throws IllegalArgumentException | shelter == null
-	 * @throws IllegalArgumentException | appetite < 0
+	 * @throws IllegalArgumentException | appetite <= 0
 	 * 	
 	 *  via super: (je moet deze ook hier vermelden zie modelopl it 2 
 	 * @throws IllegalArgumentException | position == null
@@ -118,7 +119,7 @@ public class Hunter extends Entity
 		
 		//---- NIEUW ----
 		if(shelter==null) {throw new IllegalArgumentException();}
-		if(appetite < 0) {throw new IllegalArgumentException();}
+		if(appetite <= 0) {throw new IllegalArgumentException();}
 		//----       ----
 		this.shelter = shelter;
 		this.appetite = appetite;

@@ -237,7 +237,9 @@ public class Prey extends MortalEntity
 	    //remove this from the inhabitants list of the shelter
 	    
 	    shelter.inhabitants.remove(this);
-	    if(shelter.inhabitants.isEmpty()) {shelter.die();}
+	    if(shelter.inhabitants.isEmpty()) {
+	    	shelter.die();
+	    	}
 	    
 	    //clear the siblings and shelter fields
 	    siblings.clear();
