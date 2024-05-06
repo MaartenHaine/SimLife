@@ -103,6 +103,12 @@ public abstract class MortalEntity extends Entity
         }
     }
     
+    /**
+     * 
+     * v entity: 
+     * @post | old(getWorld()).equals(getWorld())
+	 * @post | getMoveProbability()==old(getMoveProbability())
+     */
     public abstract void performActionIfAlive();
     
     public boolean isDead()

@@ -272,6 +272,8 @@ public class Prey extends MortalEntity
      *  else it will not move
      * @post if the move forward neuron outputs a value strictly greater than zero, the prey will move forward in the direction of its orientation if possibke
      * @post if the preys distance of the shelter is bigger than Constants.SHELTER_SURVIVAL_DISTANCE, the prey's score will decrease by one else it will increase by one
+     * @post | old(getWorld()).equals(getWorld())
+	 * @post | getMoveProbability()==old(getMoveProbability())
      */
     @Override
     public void performActionIfAlive()

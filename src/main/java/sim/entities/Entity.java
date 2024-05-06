@@ -63,7 +63,7 @@ public abstract class Entity
 	 * @throws IllegalArgumentException | position == null
 	 * @throws IllegalArgumentException | orientation == null
 	 * @throws IllegalArgumentException | moveProbability < 0 || moveProbability> 100
-	 * @throws IllegalArgumentException | world != null && world.getEntityAt(position)!=null
+	 * @throws IllegalArgumentException | world != null && world.entityGrid.at(position)!=null
 	 * @throws IllegalArgumentException | world != null && !world.entityGrid.isValidPosition(position)
 	 *  
 	 * @mutates_properties | this.getWorld()
@@ -73,8 +73,8 @@ public abstract class Entity
 	 * @post | getPosition().equals(position)
 	 * @post | getOrientation().equals(orientation)
 	 * @post | getMoveProbability()==moveProbability
-	 * @post | getWorld() == null || getWorld().getEntityAt(position).equals(this)
-	 * @post | getWorld() == null ||  Point.isWithin(getPosition(),getWorld().getWidth(),getWorld().getHeight())
+	 * @post | this.world == null || this.world.entityGrid.at(position).equals(this)
+	 * @post | this.world == null ||  Point.isWithin(getPosition(),this.world.getWidth(),this.world.getHeight())
 	 */
 	Entity(World world, Point position, Orientation orientation, int moveProbability)
     {
@@ -82,7 +82,7 @@ public abstract class Entity
 		if (position == null ) {throw new IllegalArgumentException();}
 		if (orientation  == null) {throw new IllegalArgumentException();}
 		if (moveProbability < 0 || moveProbability> 100) {throw new IllegalArgumentException();}
-		if (world != null && world.getEntityAt(position)!=null) {throw new IllegalArgumentException();}
+		if (world != null && world.entityGrid.at(position)!=null) {throw new IllegalArgumentException();}
 		if (world != null && !world.entityGrid.isValidPosition(position)) {throw new IllegalArgumentException();}
 		/* OUD
     	this.world = null;
@@ -194,7 +194,7 @@ public abstract class Entity
      * this position is free or not.
      * 
      * @creates nieuw punt wordt gereturned | result
-     * @post | result.equals(old(getPosition()).move(getOrientation().toVector()))
+     * @post | result.equals(getPosition().move(getOrientation().toVector()))
      */
     public Point destination()
     {
@@ -210,7 +210,7 @@ public abstract class Entity
      * 
      * made to ignore by compiler because this is a slow operation
      * mutates_properties  getWorld().giveEntityGrid()
-     * @post | Logic.implies(getWorld().isFree(old(destination())),getPosition().equals(destination()))
+     * @post | Logic.implies(getWorld().isFree(old(destination())),getPosition().equals(old(destination())))
      * 
      * @post | old(getWorld()) == getWorld()
 	 * @post | getOrientation().equals(old(getOrientation()))

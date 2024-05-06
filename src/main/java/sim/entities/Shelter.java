@@ -111,7 +111,9 @@ public class Shelter extends MortalEntity
 
 	/**
 	 * Shelter has Constants.SHELTER_TURN_PROBABILITY chance of turning. In 50% of the cases it turns clockwise, in the other 50% if turns counterclockwise.
-  	* Next, it has Constants.SHELTER_MOVE_PROBABILITY chance of moving one step forward.
+  	 * Next, it has Constants.SHELTER_MOVE_PROBABILITY chance of moving one step forward.
+  	 * @post | old(getWorld()).equals(getWorld())
+	 * @post | getMoveProbability()==old(getMoveProbability())
 	 */
     @Override
     public void performActionIfAlive()
