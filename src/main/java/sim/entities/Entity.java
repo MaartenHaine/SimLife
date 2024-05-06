@@ -83,17 +83,20 @@ public abstract class Entity
 		if ( moveProbability < 0 || moveProbability> 100) {throw new IllegalArgumentException();}
 		//if ( world.entityGrid.at(position)!=null) {throw new IllegalArgumentException();}
 		if ( !world.entityGrid.isValidPosition(position)) {throw new IllegalArgumentException();}
+		
 		/* OUD
-    	this.world = null;
+    	this.world = null;  
     	this.position = null;
     	this.orientation = null;
     	this.moveProbability = 0;
     	*/
+		
 		//world niet clonen want geen repr object?
 		if ( world.entityGrid.at(position)!=null) {
 			this.world = new World(world.getWidth(),world.getHeight());
+		}else{
+			this.world = world;
 			}
-		else{this.world = world;}
 		
 		this.world.entityGrid.setAt(position,this);
 		
