@@ -117,7 +117,7 @@ public class Prey extends MortalEntity
 	 * @throws IllegalArgumentException | chromosome == null
 	 * @throws IllegalArgumentException | shelter == null
 	 * 
-     * @mutates_properties | shelter.getInhabitants(), this.getShelter()
+     * mutates_properties | shelter.getInhabitants(), this.getShelter()
 	 * 
 	 * @post | getChromosome().equals(chromosome)
 	 * @post | getChromosome() != null
@@ -137,7 +137,7 @@ public class Prey extends MortalEntity
 	 * @throws IllegalArgumentException | orientation == null
 	 * @throws IllegalArgumentException | !world.entityGrid.isValidPosition(position)
 	 *
-	 * @mutates_properties | this.getWorld()
+	 * mutates_properties | this.getWorld()
 	 * also mutates world.giveEntityGrid() (this is a very slow operation and thus not documentated in a mutates)
 	 *  
 	 *  

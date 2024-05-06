@@ -73,7 +73,7 @@ public class Hunter extends Entity
 	 * @throws IllegalArgumentException | orientation == null
 	 * @throws IllegalArgumentException | !world.entityGrid.isValidPosition(position)
 	 *
-	 * @mutates_properties | this.getWorld(), world.giveEntityGrid()
+	 * mutates_properties | this.getWorld(), world.giveEntityGrid()
 	 *
 	 * @post | Logic.implies(old(world).entityGrid.at(position)==null, world == this.world)
 	 * @post | getPosition().equals(position)
@@ -102,7 +102,7 @@ public class Hunter extends Entity
 	 * @throws IllegalArgumentException | orientation == null
 	 * @throws IllegalArgumentException | !world.entityGrid.isValidPosition(position)
 	 *
-	 * @mutates_properties | this.getWorld(), world.giveEntityGrid()
+	 * mutates_properties | this.getWorld(), world.giveEntityGrid()
 	 *
 	 * @post | Logic.implies(old(world).entityGrid.at(position)==null, world == this.world)
 	 * @post | getPosition().equals(position)

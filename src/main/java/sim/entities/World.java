@@ -228,7 +228,7 @@ public class World
 	 * @throws IllegalArgumentException | !this.giveEntityGrid().isValidPosition(position)
 	 *
 	 * @creates | result
-	 * @mutates_properties | this.giveEntityStream(), this.getHunters()
+	 * mutates_properties | this.giveEntityStream(), this.getHunters()
 	 * This is also mutated but not included because its slow:  this.giveEntityGrid()
 	 *
 	 * @post | Logic.implies(old(this).getEntityAt(position)==null, this == result.getWorld())
