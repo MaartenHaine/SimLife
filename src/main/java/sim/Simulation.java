@@ -15,6 +15,7 @@ import util.Point;
 import util.RandomUtil;
 import sim.Constants;
 import sim.entities.Prey;
+import sim.entities.Shelter;
 
 public class Simulation
 {
@@ -59,7 +60,7 @@ public class Simulation
     	this.preyCount = shelterCount*inhabitantsPerShelter;
     	this.inhabitantsPerShelter = inhabitantsPerShelter;
     	this.huntersPerShelter = huntersPerShelter;
-    	this.world = new World(worldSize, worldSize);
+    	this.world = createRandomWorld(preyCount);
     }
     
 	/**
@@ -90,10 +91,48 @@ public class Simulation
 		var world = new World(worldSize, worldSize);
 		
 		ArrayList<Point> positions = new ArrayList<Point>(world.givePositionStream().toList());
+		
+		
 		RandomUtil.shuffle(positions);
+		System.out.println(positions.size());	
+		
 		for (int i = 0; i < shelterCount; i++)
 		{
-			var shelter = world.createShelter(positions.get(i), Orientation.createRandom());
+			Shelter shelter = world.createShelter(positions.get(i), Orientation.createRandom());
+			
+			//System.out.println(i);		
+			
+			for(int j=0; j<inhabitantsPerShelter;j++) {
+				/*
+				Point inhab_pos = positions.get(RandomUtil.integer(positions.size()));
+				
+				while(!world.isFree(inhab_pos)) {
+					inhab_pos = positions.get(RandomUtil.integer(positions.size()));
+				}
+				*/
+				world.createPrey(shelter, chromosomes.get(i*inhabitantsPerShelter+j), 
+						positions.get(shelterCount+j+i*inhabitantsPerShelter), 
+						Orientation.createRandom());
+						//System.out.println(shelterCount+j+i*inhabitantsPerShelter);
+				
+			}
+			
+			for(int j=0; j<huntersPerShelter;j++) {
+				/*
+				Point hunter_pos = positions.get(RandomUtil.integer(positions.size()));
+				
+				while(!world.isFree(hunter_pos)) {
+					hunter_pos = positions.get(RandomUtil.integer(positions.size()));
+				}*/
+				world.createHunter(shelter, 
+						positions.get(shelterCount+shelterCount*inhabitantsPerShelter+j+i*huntersPerShelter),
+						Orientation.createRandom());
+						//System.out.println(shelterCount+shelterCount*inhabitantsPerShelter+j+i*inhabitantsPerShelter);		
+				
+			}
+			
+			
+			/*
 			boolean bool2 = true;
 			boolean bool1 = true;
 			for (int j = 0; j < inhabitantsPerShelter; j++)
@@ -108,6 +147,7 @@ public class Simulation
 					}
 
 				}
+				
 			}
 			for (int j = 0; j < huntersPerShelter; j++)
 			{
@@ -121,7 +161,9 @@ public class Simulation
 					}
 
 				}
+				
 			}
+			*/
 			
 		}
 		return world;

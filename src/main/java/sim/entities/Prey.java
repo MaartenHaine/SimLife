@@ -170,9 +170,17 @@ public class Prey extends MortalEntity
 
         //NEW
         
+        /*
         for (Prey sib : siblings) {
         	sib.siblings.add(this);
-        }
+        }*/
+        
+        int range = siblings.size();
+        ArrayList<Prey> clone = new ArrayList<Prey>(siblings);
+	    for(int i=0; i< range;i++) {
+	    	Prey sib = clone.get(i);
+	    	sib.siblings.add(this);
+	    }
         
         shelter.inhabitants.add(this);
     }
@@ -224,7 +232,11 @@ public class Prey extends MortalEntity
 	    super.diePkg();
 	    
 	    //remove this from the siblings list of the siblings
-	    for(Prey sib: siblings) {
+	    int range = siblings.size();
+	    
+	    ArrayList<Prey> clone = new ArrayList<Prey>(siblings);
+	    for(int i=0; i< range;i++) {
+	    	Prey sib = clone.get(i);
 	    	sib.siblings.remove(this);
 	    }
 	    //remove this from the inhabitants list of the shelter
