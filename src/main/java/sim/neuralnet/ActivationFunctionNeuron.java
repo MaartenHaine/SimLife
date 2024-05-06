@@ -39,7 +39,6 @@ public abstract class ActivationFunctionNeuron implements Neuron
     		res.add(aux);
     	}
     	return res;
-
     }
     
     /**
@@ -78,7 +77,7 @@ public abstract class ActivationFunctionNeuron implements Neuron
      * @mutates | this
      * @pre | dependency != null
      * @post | implies(old(getDependencies().size()) == 5, result == false)
-     * post | implies(old(getDependencies().size()) < 5, (result == true)&&(getDependencies().contains(new Pair<Neuron, Integer>(dependency, weight))))
+     * @post | implies(old(getDependencies().size()) < 5, (result == true)&&(getDependencies().contains(new Pair<Neuron, Integer>(dependency, weight))))
      * @post | getDependencies().size() == old(getDependencies().size()) + (result ? 1 : 0)
      * */
 

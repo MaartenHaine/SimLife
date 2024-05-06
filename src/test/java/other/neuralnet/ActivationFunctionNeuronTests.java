@@ -19,120 +19,119 @@ import util.Point;
 import sim.Constants;
 
 class ActivationFunctionNeuronTests {
-
+	
 	@Test
-    void testConstructor() {
-        ActivationFunctionNeuron neuron = new ActivationFunctionNeuron() {
-        	public int applyActivationFunction(int input) {return 0;}
-        };
+	void testConstruct() {
+		ActivationFunctionNeuron neuron = new LinearFunctionNeuron();
 
-        assertEquals(0, neuron.getBias());
-        assertTrue(neuron.getDependencies().isEmpty());
-    }
-
-	/* EFFE GECOMMENT OM GEEN ERRORS TE HEBBEN
-	@Test
-	void testBugsActivationFunctionNeuron() {
-
-		
-		ActivationFunctionNeuron neuron = new ActivationFunctionNeuron() {
-			
-        	public int applyActivationFunction(int input) {return input;}
-        	//return input for testing purposes, in this test output will be between -1000 and 1000 so no invars/post/pre will be triggerd
-        };
+		assertEquals(neuron.getBias(), 0);
+		assertEquals(neuron.getDependencies().size(), 0);
 	}
 
-	 @Test
-    void testSetAndGetDependencies() {
-        ActivationFunctionNeuron neuron = new ActivationFunctionNeuron() {
-        	public int applyActivationFunction(int input) {return 0;}
-        };
+	@Test
+	void testApplyActivationFunction() {
+		LinearFunctionNeuron neuron = new LinearFunctionNeuron();
 
-    	Neuron dummy = new Neuron(){ 
-        	@Override
-        	public int computeOutput(World world, Creature creature){return 0;}
-        	};
-        	
-        ArrayList<Pair<Neuron, Integer>> testDependencies = new ArrayList<>();
-        testDependencies.add(new Pair<>(dummy, 2));
-        testDependencies.add(new Pair<>(dummy, 3));
+		// Test for input less than -1000
+		assertEquals(-1000, neuron.applyActivationFunction(-1500));
 
-        neuron.setDependencies(testDependencies);
+		// Test for input greater than 1000
+		assertEquals(1000, neuron.applyActivationFunction(1500));
 
-        ArrayList<Pair<Neuron, Integer>> retrievedDependencies = neuron.getDependencies();
-
-        assertEquals(testDependencies.size(), retrievedDependencies.size());
-
-        for (int i = 0; i < testDependencies.size(); i++) {
-            Pair<Neuron, Integer> expectedPair = testDependencies.get(i);
-            Pair<Neuron, Integer> retrievedPair = retrievedDependencies.get(i);
-
-            assertEquals(expectedPair.getFirst(), retrievedPair.getFirst());
-            assertEquals(expectedPair.getSecond(), retrievedPair.getSecond());
-        }
-    }
+		// Test for input within the range [-1000, 1000]
+		assertEquals(-500, neuron.applyActivationFunction(-500));
+		assertEquals(500, neuron.applyActivationFunction(500));
+		assertEquals(0, neuron.applyActivationFunction(0));
+	}
 
 	@Test
-    void testConnect() {
-    	ActivationFunctionNeuron neuron = new ActivationFunctionNeuron() {
-           	public int applyActivationFunction(int input) {return 0;}
-           };
-        Neuron dummy = new Neuron(){ 
-           @Override
-           public int computeOutput(Prey creature){return 0;}
-           };
-        assertTrue(neuron.connect(dummy, 2));
-        assertTrue(neuron.connect(dummy, 3));
-        assertTrue(neuron.connect(dummy, 4));
-        assertTrue(neuron.connect(dummy, 5));
-        assertTrue(neuron.connect(dummy, 6));
-    	
-        assertTrue(neuron.getDependencies().get(neuron.getDependencies().size() - 1).equals(new Pair<>(dummy, 6)));
+	void testSetDependencies() {
+		ActivationFunctionNeuron neuron = new LinearFunctionNeuron();
+		ArrayList<Pair<Neuron, Integer>> deps = new ArrayList<Pair<Neuron, Integer>>();
+		deps.add(new Pair<Neuron, Integer>(new FreePassageSensorNeuron(Orientation.north()), 1));
+		deps.add(new Pair<Neuron, Integer>(new FreePassageSensorNeuron(Orientation.northWest()), 1));
+		deps.add(new Pair<Neuron, Integer>(new FreePassageSensorNeuron(Orientation.northEast()), 1));
+		deps.add(new Pair<Neuron, Integer>(new FreePassageSensorNeuron(Orientation.south()), 1));
+		deps.add(new Pair<Neuron, Integer>(new FreePassageSensorNeuron(Orientation.southWest()), 1));
+		neuron.setDependencies(deps);
 
-        
-        assertTrue(neuron.connect(dummy, 7));
-        assertTrue(neuron.connect(dummy, 8));
-        
-        // check for silent fail
-        assertFalse(neuron.connect(dummy, 9));
-      
-        assertEquals(7, neuron.getDependencies().size());
-        assertTrue(neuron.getDependencies().get(6).equals(new Pair<>(dummy, 8)));
-    }
+		assertEquals(neuron.getDependencies().size(), 5);
+	}
 
-	 @Test
-    void testComputeOutput() {
-    	//Make Neuron with connections
-		ActivationFunctionNeuron testedNeuron = new LinearFunctionNeuron();
+	@Test
+	void testGetDependencies() {
+		ActivationFunctionNeuron neuron = new LinearFunctionNeuron();
+		ArrayList<Pair<Neuron, Integer>> deps = new ArrayList<Pair<Neuron, Integer>>();
+		deps.add(new Pair<Neuron, Integer>(new FreePassageSensorNeuron(Orientation.north()), 1));
+		deps.add(new Pair<Neuron, Integer>(new FreePassageSensorNeuron(Orientation.northWest()), 1));
+		deps.add(new Pair<Neuron, Integer>(new FreePassageSensorNeuron(Orientation.northEast()), 1));
+		deps.add(new Pair<Neuron, Integer>(new FreePassageSensorNeuron(Orientation.south()), 1));
+		deps.add(new Pair<Neuron, Integer>(new FreePassageSensorNeuron(Orientation.southWest()), 1));
+		neuron.setDependencies(deps);
 
-		HorizontalOrientationSensorNeuron n1 = new HorizontalOrientationSensorNeuron();
-		VerticalOrientationSensorNeuron n2 = new VerticalOrientationSensorNeuron();
-		HorizontalPositionSensorNeuron n3 = new HorizontalPositionSensorNeuron();
-		VerticalPositionSensorNeuron n4 = new VerticalPositionSensorNeuron();
-		FreePassageSensorNeuron n5 = new FreePassageSensorNeuron(Orientation.north());
-		FreePassageSensorNeuron n6 = new FreePassageSensorNeuron(Orientation.northWest());
-		FreePassageSensorNeuron n7 = new FreePassageSensorNeuron(Orientation.northEast());
+		assertEquals(neuron.getDependencies().get(0).getFirst().getClass(), FreePassageSensorNeuron.class);
+		assertEquals(neuron.getDependencies().get(0).getSecond(), 1);
+	}
+
+	@Test
+	void testGetBias() {
+		ActivationFunctionNeuron neuron = new LinearFunctionNeuron();
+		assertEquals(neuron.getBias(), 0);
+	}
+
+	@Test
+	void testSetBias() {
+		ActivationFunctionNeuron neuron = new LinearFunctionNeuron();
+		neuron.setBias(1);
+		assertEquals(neuron.getBias(), 1);
+	}
+
+	@Test
+	void testConnect() {
+		ActivationFunctionNeuron neuron = new LinearFunctionNeuron();
+		Neuron dep = new FreePassageSensorNeuron(Orientation.north());
+		assertTrue(neuron.connect(dep, 1));
+		assertEquals(neuron.getDependencies().size(), 1);
+
+		//geneerate more dependencies so that the limit is reached
+		dep = new FreePassageSensorNeuron(Orientation.northWest());
+		neuron.connect(dep, 1);
+		dep = new FreePassageSensorNeuron(Orientation.northEast());
+		neuron.connect(dep, 1);
+		dep = new FreePassageSensorNeuron(Orientation.south());
+		neuron.connect(dep, 1);
+		dep = new FreePassageSensorNeuron(Orientation.southWest());
+		neuron.connect(dep, 1);
+		dep = new FreePassageSensorNeuron(Orientation.southEast());
+		assertFalse(neuron.connect(dep, 1));
+
+	}
+
+	@Test
+	void testComputeOutput() {
+		World world = new World(Constants.WORLD_SIZE, Constants.WORLD_SIZE);
+		var shelter = world.createShelter(new Point(0, 0), Orientation.createRandom());
+		var chromosome = Chromosome.createRandom();
+		var prey = world.createPrey(shelter, chromosome, new Point(1, 0), Orientation.createRandom());
 		
-		testedNeuron.setBias(1);
-		testedNeuron.connect(n4, 100);
-		testedNeuron.connect(n3, 100);
-		testedNeuron.connect(n2, 100);
-		testedNeuron.connect(n1, 100);
-		testedNeuron.connect(n7, 100);
-		testedNeuron.connect(n6, 100);
-		testedNeuron.connect(n5, 100);
+		ActivationFunctionNeuron neuron = new LinearFunctionNeuron();
+		Neuron dep = new FreePassageSensorNeuron(Orientation.north());
+		neuron.connect(dep, 1);
+		dep = new FreePassageSensorNeuron(Orientation.northWest());
+		neuron.connect(dep, 1);
+
+		neuron.setBias(100000);
+		//apply activation and check if change
+		neuron.computeOutput(prey);
+
+		//because we set bias high we will always return 1000
+		assertEquals(neuron.computeOutput(prey), 1000);
+
+		//if we set bias back to 1 we will return a random integer depending on the randomness
+		neuron.setBias(1);
+		assertTrue(neuron.computeOutput(prey) >= -1000 && neuron.computeOutput(prey) <= 1000);
+	}
+
 	
-		ImmobileBehavior behavior = new ImmobileBehavior(Chromosome.createRandom());
-		Point position1 = new Point(0, 0);
-		Orientation orientation = Orientation.southEast();
-		Creature creature1 = new Creature(behavior, position1, orientation);
-
-		World w = new World(Constants.WSIZE,Constants.WSIZE,new Creature[] {creature1});
-		
-		assertEquals(126,testedNeuron.computeOutput(w, creature1));
-    }
-    */
-
-
 }
 
