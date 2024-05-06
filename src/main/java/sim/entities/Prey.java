@@ -135,19 +135,18 @@ public class Prey extends MortalEntity
 	 * @throws IllegalArgumentException | world==null
 	 * @throws IllegalArgumentException | position == null
 	 * @throws IllegalArgumentException | orientation == null
-	 * @throws IllegalArgumentException | world.entityGrid.at(position)!=null
 	 * @throws IllegalArgumentException | !world.entityGrid.isValidPosition(position)
 	 *
 	 * @mutates_properties | this.getWorld()
 	 * also mutates world.giveEntityGrid() (this is a very slow operation and thus not documentated in a mutates)
 	 *  
 	 *  
-	 * @post | world == getWorld()
+	 * @post | Logic.implies(old(world).entityGrid.at(position)==null, world == this.world)
 	 * @post | getPosition().equals(position)
 	 * @post | getOrientation().equals(orientation)
 	 * @post | getMoveProbability()==Constants.PREY_MOVE_PROBABILITY
 	 * @post | this.world.entityGrid.at(position).equals(this)
-	 * @post |  Point.isWithin(getPosition(),this.world.getWidth(),this.world.getHeight())	
+	 * post   Point.isWithin(getPosition(),this.world.getWidth(),this.world.getHeight())	
 	 * 
 	 * @post | isDead() == false
 	 */
@@ -166,7 +165,7 @@ public class Prey extends MortalEntity
         this.chromosome = chromosome;
         this.neuralNetwork = NeuralNetwork.fromChromosome(chromosome);
         // makes copy of inhabitants array
-        this.siblings = this.shelter.getInhabitants();
+        this.siblings = this.shelter.inhabitants;
         this.score = 0;
 
         //NEW

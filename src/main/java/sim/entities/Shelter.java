@@ -8,8 +8,8 @@ import util.Logic;
 import util.Orientation;
 import util.Point;
 import util.RandomUtil;
+
 /**
- * 
  * @invar | getInhabitants() != null
  * @invar |  getInhabitants().stream().allMatch(prey-> prey==null || prey.getShelter().equals(this))
  *  
@@ -45,19 +45,18 @@ public class Shelter extends MortalEntity
 	 * @throws IllegalArgumentException | world==null
 	 * @throws IllegalArgumentException | position == null
 	 * @throws IllegalArgumentException | orientation == null
-	 * @throws IllegalArgumentException | world.entityGrid.at(position)!=null
 	 * @throws IllegalArgumentException | !world.entityGrid.isValidPosition(position)
 	 *
 	 * @mutates_properties | this.getWorld()
 	 * also mutates world.giveEntityGrid() (this is a very slow operation and thus not documentated in a mutates)
 	 *   
-	 * @post | world == getWorld()
+	 * @post | Logic.implies(old(world).entityGrid.at(position)==null, world == this.world)
 	 * @post | getPosition().equals(position)
 	 * @post | getOrientation().equals(orientation)
 	 * @post | getMoveProbability()==Constants.SHELTER_MOVE_PROBABILITY
 	 * 
 	 * @post | this.world.entityGrid.at(position).equals(this)
-	 * @post |  Point.isWithin(getPosition(),this.world.getWidth(),this.world.getHeight())	
+	 * @post | Point.isWithin(getPosition(),this.world.getWidth(),this.world.getHeight())	
 	 * 
 	 * 
 	 * @post | isDead() == false

@@ -8,7 +8,6 @@ import util.RandomUtil;
 import static util.Logic.*
 ;
 
-
 /**
  * Supertype for all entities.
  * 
@@ -64,18 +63,17 @@ public abstract class Entity
 	 * @throws IllegalArgumentException | position == null
 	 * @throws IllegalArgumentException | orientation == null
 	 * @throws IllegalArgumentException | moveProbability < 0 || moveProbability> 100
-	 * @throws IllegalArgumentException | world.entityGrid.at(position)!=null
 	 * @throws IllegalArgumentException | !world.entityGrid.isValidPosition(position)
 	 *  
 	 * @mutates_properties | this.getWorld()
 	 * also mutates world.giveEntityGrid() (this is a very slow operation and thus not documentated in a mutates)
 	 *  
-	 * @post | world == getWorld()
+	 * @post | Logic.implies(old(world).entityGrid.at(position)==null, world == this.world)
 	 * @post | getPosition().equals(position)
 	 * @post | getOrientation().equals(orientation)
 	 * @post | getMoveProbability()==moveProbability
 	 * @post | this.world.entityGrid.at(position).equals(this)
-	 * @post |  Point.isWithin(getPosition(),this.world.getWidth(),this.world.getHeight())
+	 * @post | Point.isWithin(getPosition(),this.world.getWidth(),this.world.getHeight())
 	 */
 	Entity(World world, Point position, Orientation orientation, int moveProbability)
     {
@@ -83,7 +81,7 @@ public abstract class Entity
 		if ( position == null ) {throw new IllegalArgumentException();}
 		if ( orientation  == null) {throw new IllegalArgumentException();}
 		if ( moveProbability < 0 || moveProbability> 100) {throw new IllegalArgumentException();}
-		if ( world.entityGrid.at(position)!=null) {throw new IllegalArgumentException();}
+		//if ( world.entityGrid.at(position)!=null) {throw new IllegalArgumentException();}
 		if ( !world.entityGrid.isValidPosition(position)) {throw new IllegalArgumentException();}
 		/* OUD
     	this.world = null;
@@ -92,9 +90,12 @@ public abstract class Entity
     	this.moveProbability = 0;
     	*/
 		//world niet clonen want geen repr object?
+		if ( world.entityGrid.at(position)!=null) {
+			this.world = new World(world.getWidth(),world.getHeight());
+			}
+		else{this.world = world;}
 		
-		this.world = world;
-		world.entityGrid.setAt(position,this);
+		this.world.entityGrid.setAt(position,this);
 		
     	this.position = position;
     	this.orientation = orientation;
@@ -289,7 +290,6 @@ public abstract class Entity
      * Hint: only flawed methods use this method (or its children).
      * In our implementation this method is never used.
      * 
-     * @post | result.getWorld().equals(getWorld())
      * @post | result.getPosition().equals(getPosition())
      * @post | result.getOrientation().equals(getOrientation())
      * @post | result.getMoveProbability()==getMoveProbability()

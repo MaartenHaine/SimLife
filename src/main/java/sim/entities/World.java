@@ -100,7 +100,7 @@ public class World
 	public int getHeight()
 	{
 		//OLD return 0;
-		return entityGrid.getWidth();
+		return entityGrid.getHeight();
 	}
 
 	/**
@@ -116,7 +116,8 @@ public class World
 	{
 		ArrayList<Entity> res = new ArrayList<Entity>();
 		res.addAll(
-		   giveEntityStreamPriv().map(ent -> ent.giveCopy()).toList()
+		   // FLAWED? giveEntityStreamPriv().map(ent -> ent.giveCopy()).toList()
+	       giveEntityStreamPriv().toList()
 		   );
 	    return res;
 	}

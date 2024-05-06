@@ -66,7 +66,6 @@ public class Hunter extends Entity
 	 * 
 	 *  via super: (je moet deze ook hier vermelden zie modelopl it 2 
 	 *
-	 * @throws IllegalArgumentException | world==null
 	 * @throws IllegalArgumentException | position == null
 	 * @throws IllegalArgumentException | orientation == null
 	 * @throws IllegalArgumentException | world.entityGrid.at(position)!=null
@@ -74,7 +73,7 @@ public class Hunter extends Entity
 	 *
 	 * @mutates_properties | this.getWorld(), world.giveEntityGrid()
 	 *
-	 * @post | world == getWorld()
+	 * @post | Logic.implies(old(world).entityGrid.at(position)==null, world == this.world)
 	 * @post | getPosition().equals(position)
 	 * @post | getOrientation().equals(orientation)
 	 * @post | getMoveProbability()==Constants.HUNTER_MOVE_PROBABILITY
@@ -99,17 +98,16 @@ public class Hunter extends Entity
 	 * @throws IllegalArgumentException | world==null
 	 * @throws IllegalArgumentException | position == null
 	 * @throws IllegalArgumentException | orientation == null
-	 * @throws IllegalArgumentException | world.entityGrid.at(position)!=null
 	 * @throws IllegalArgumentException | !world.entityGrid.isValidPosition(position)
 	 *
 	 * @mutates_properties | this.getWorld(), world.giveEntityGrid()
 	 *
-	 * @post | world == getWorld()
+	 * @post | Logic.implies(old(world).entityGrid.at(position)==null, world == this.world)
 	 * @post | getPosition().equals(position)
 	 * @post | getOrientation().equals(orientation)
 	 * @post | getMoveProbability()==Constants.HUNTER_MOVE_PROBABILITY
 	 * @post | this.world.entityGrid.at(position).equals(this)
-	 * @post | Point.isWithin(getPosition(),this.world.getWidth(),this.world.getHeight())
+	 * post Point.isWithin(getPosition(),this.world.getWidth(),this.world.getHeight())
 	* 
 	 * @post The hunter will have an appetite as is given as argument
 	 */

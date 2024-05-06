@@ -26,7 +26,7 @@ public abstract class MortalEntity extends Entity
 {
 	/**
 	 * @invar | Logic.implies(dead,world==null)
-	 * @invar | Logic.implies(!dead,world!=null && world.getEntities().contains(this))
+	 * @invar | Logic.implies(!dead,world!=null && world.entityGrid.at(getPosition())==(this))
 	 */
     private boolean dead;
     
@@ -35,18 +35,17 @@ public abstract class MortalEntity extends Entity
 	 * @throws IllegalArgumentException | world==null
 	 * @throws IllegalArgumentException | position == null
 	 * @throws IllegalArgumentException | orientation == null
-	 * @throws IllegalArgumentException | world.entityGrid.at(position)!=null
 	 * @throws IllegalArgumentException | !world.entityGrid.isValidPosition(position)
 	 *
 	 * @mutates_properties | this.getWorld()
 	 * also mutates world.giveEntityGrid() (this is a very slow operation and thus not documentated in a mutates)
 	 *  
-	 * @post | world == getWorld()
+	 * @post | Logic.implies(old(world).entityGrid.at(position)==null, world == this.world)
 	 * @post | getPosition().equals(position)
 	 * @post | getOrientation().equals(orientation)
 	 * @post | getMoveProbability()==moveProbability
 	 * @post | this.world.entityGrid.at(position).equals(this)
-	 * @post |  Point.isWithin(getPosition(),this.world.getWidth(),this.world.getHeight())	
+	 * @post | Point.isWithin(getPosition(),this.world.getWidth(),this.world.getHeight())	
 	 * 
 	 * nieuw
 	 * @post | isDead() == false
