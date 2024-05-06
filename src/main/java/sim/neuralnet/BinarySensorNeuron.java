@@ -5,7 +5,6 @@ import sim.entities.Prey;
 /**
  * @immutable
  * 
- * @invar | prey != null
  * @post | implies(detect(prey) == true, 750) 
  * @post | implies(detect(prey) == false, -750)
  */
