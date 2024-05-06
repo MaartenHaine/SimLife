@@ -127,7 +127,7 @@ public class Shelter extends MortalEntity
     			turnCounterclockwise();
     		}
     	}
-    	//prob ==Constants.SHELTER_MOVE_PROBABILITY
+    	// the prob equals Constants.SHELTER_MOVE_PROBABILITY
     	moveForwardWithProbability();
     }
 

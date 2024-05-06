@@ -22,7 +22,6 @@ import static util.Logic.*
  * @invar the shelter that hunter is focused on is in World
  * @invar Every hunter is in the entityGrid 
  * | getHunters().stream().allMatch(h ->  giveEntityStream().anyMatch(e-> h.equals(e)))
- * 
  */
 public class World
 {
@@ -49,8 +48,8 @@ public class World
 	
 	/**
 	 * @invar | hunters != null
-	 * @invar | hunters.stream().allMatch(hunt -> hunt ==null || this.entityGrid.givePositionStream().map(pos -> this.entityGrid.at(pos)).anyMatch(ent-> ent.equals(hunt.shelter)))
-	 * @invar Every hunter is in the entityGrid | hunters.stream().allMatch(h -> entityGrid.givePositionStream().map(pos -> entityGrid.at(pos)).anyMatch(e-> e.equals(h)))
+	 * @invar | hunters.stream().allMatch(hunt -> hunt ==null || this.entityGrid.givePositionStream().map(pos -> this.entityGrid.at(pos)).anyMatch(ent-> ent ==null || ent.equals(hunt.shelter)))
+	 * @invar Every hunter is in the entityGrid | hunters.stream().allMatch(h -> entityGrid.givePositionStream().map(pos -> entityGrid.at(pos)).anyMatch(e-> e==null || e.equals(h)))
 	 * 
 	 * @representationObject
 	 * @peerObjects
@@ -117,7 +116,7 @@ public class World
 		ArrayList<Entity> res = new ArrayList<Entity>();
 		res.addAll(
 		   // FLAWED? giveEntityStreamPriv().map(ent -> ent.giveCopy()).toList()
-	       giveEntityStreamPriv().toList()
+	        giveEntityStreamPriv().toList()
 		   );
 	    return res;
 	}
@@ -218,27 +217,29 @@ public class World
 
 
 
+	
 	/**
-	 * @pre| shelter != null
+	 * @throws IllegalArgumentException | shelter == null
 	 * 
-	 * @pre| position != null
-	 * @pre| orientation != null
-	 * @pre positie is vrij | this.getEntityAt(position)==null
-	 * @pre | this.isInside(position)
-	 *  ??MOET DIT ERBIJ: throws IllegalArgumentException | Constants.HUNTER_MOVE_PROBABILITY < 0 || Constants.HUNTER_MOVE_PROBABILITY> 100
+	 *  via super: (je moet deze ook hier vermelden zie modelopl it 2 
+	 *
+	 * @throws IllegalArgumentException | position == null
+	 * @throws IllegalArgumentException | orientation == null
+	 * @throws IllegalArgumentException | !this.giveEntityGrid().isValidPosition(position)
 	 *
 	 * @creates | result
 	 * @mutates_properties | this.giveEntityStream(), this.getHunters()
 	 * This is also mutated but not included because its slow:  this.giveEntityGrid()
 	 *
-	 * @post | result.getWorld() == this
+	 * @post | Logic.implies(old(this).getEntityAt(position)==null, this == result.getWorld())
 	 * @post | result.getPosition().equals(position)
 	 * @post | result.getOrientation().equals(orientation)
 	 * @post | result.getMoveProbability()==Constants.HUNTER_MOVE_PROBABILITY
-	 * @post | this.getEntities().contains(result)
-	 * @post | isInside(result.getPosition())
-	 * 
+	 * @post | result.getWorld().giveEntityGrid().at(position).equals(result)
+	 * @post | Point.isWithin(result.getPosition(),getWidth(),getHeight())
+	* 
 	 * @post The hunter will have Constants.HUNTER_INITIAL_APPETITE appetite
+	 * 
 	 */
 	public Hunter createHunter(Shelter shelter, Point position, Orientation orientation)
 	{
@@ -254,26 +255,29 @@ public class World
 	}
 
 
-	/**
-	 * @pre | position != null
-	 * @pre | orientation != null
-	 * MOET DIT?  throws IllegalArgumentException | Constants.SHELTER_MOVE_PROBABILITY < 0 || Constants.SHELTER_MOVE_PROBABILITY > 100
-	 * @pre |  this.getEntityAt(position)==null
-	 * @pre | this.isInside(position)
-	 * 
-	 * @creates | result
-	 *  @mutates_properties | this.giveEntityStream(), this.getHunters()
-	 * This is also mutated but not included because its slow:  this.giveEntityGrid()
+    /**
+     * via super: (je moet deze ook hier vermelden zie modelopl it 2 
 	 *
-	 * @post | result.getInhabitants() != null
-     * @post | this == result.getWorld()
+	 * @throws IllegalArgumentException | position == null
+	 * @throws IllegalArgumentException | orientation == null
+	 * @throws IllegalArgumentException | !this.giveEntityGrid().isValidPosition(position)
+	 *
+	 * @creates | result
+	 * also mutates world.giveEntityGrid() (this is a very slow operation and thus not documentated in a mutates)
+	 *   
+	 * @post | Logic.implies(old(this).giveEntityGrid().at(position)==null, this == result.getWorld())
 	 * @post | result.getPosition().equals(position)
 	 * @post | result.getOrientation().equals(orientation)
-	 * @post | result.getMoveProbability()== Constants.SHELTER_MOVE_PROBABILITY
+	 * @post | result.getMoveProbability()==Constants.SHELTER_MOVE_PROBABILITY
+	 * @post | result.getWorld().giveEntityGrid().at(position).equals(result)
+	 * @post | Point.isWithin(result.getPosition(),getWidth(),getHeight())	
+	 * 
+	 * 
 	 * @post | result.isDead() == false
-	 * @post | this.getEntities().contains(result)
-	 * @post | isInside(result.getPosition())
-	 */
+	 * 
+	 * shelterspecifiek:
+     * @post | result.getInhabitants().equals(new ArrayList<>())
+     */
 	public Shelter createShelter(Point position, Orientation orientation)
 	{
 		//OLD

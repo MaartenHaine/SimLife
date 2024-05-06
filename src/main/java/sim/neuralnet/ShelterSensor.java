@@ -11,6 +11,6 @@ public class ShelterSensor extends BinarySensorNeuron
 		var preyPosition = prey.getPosition();
 		var orientation = preyPosition.vectorTo(shelterPosition).toClosestOrientation();
 		
-		return orientation == prey.getOrientation();
+		return orientation.isEqual( prey.getOrientation());
 	}
 }

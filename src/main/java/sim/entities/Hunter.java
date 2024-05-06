@@ -61,14 +61,16 @@ public class Hunter extends Entity
 	 */
 	final Shelter shelter;
 	
+	
+	
 	/**
 	 * @throws IllegalArgumentException | shelter == null
 	 * 
 	 *  via super: (je moet deze ook hier vermelden zie modelopl it 2 
 	 *
+	 * @throws IllegalArgumentException | world==null
 	 * @throws IllegalArgumentException | position == null
 	 * @throws IllegalArgumentException | orientation == null
-	 * @throws IllegalArgumentException | world.entityGrid.at(position)!=null
 	 * @throws IllegalArgumentException | !world.entityGrid.isValidPosition(position)
 	 *
 	 * @mutates_properties | this.getWorld(), world.giveEntityGrid()
