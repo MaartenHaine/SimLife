@@ -297,7 +297,7 @@ public class World
 				return true;
 			}
 			
-			if ( orientation == top.vectorTo(hunterPosition).toClosestOrientation() )
+			if ( orientation.isEqual(top.vectorTo(hunterPosition).toClosestOrientation()) )
 			{
 			    return true;
 			}
