@@ -164,24 +164,29 @@ public class Prey extends MortalEntity
         this.shelter = shelter;
         this.chromosome = chromosome;
         this.neuralNetwork = NeuralNetwork.fromChromosome(chromosome);
-        // makes copy of inhabitants array
-        this.siblings = this.shelter.inhabitants;
+        
+        //FLAWED this.siblings = this.shelter.inhabitants;
+        
         this.score = 0;
 
         //NEW
         
-        /*
+
+        // makes copy of inhabitants array
+        this.siblings = new ArrayList<Prey>(this.shelter.inhabitants);
+        
+        
         for (Prey sib : siblings) {
         	sib.siblings.add(this);
-        }*/
-        
+        }
+        /*
         int range = siblings.size();
         ArrayList<Prey> clone = new ArrayList<Prey>(siblings);
 	    for(int i=0; i< range;i++) {
 	    	Prey sib = clone.get(i);
 	    	sib.siblings.add(this);
 	    }
-        
+        */
         shelter.inhabitants.add(this);
     }
 	/**
@@ -232,13 +237,21 @@ public class Prey extends MortalEntity
 	    super.diePkg();
 	    
 	    //remove this from the siblings list of the siblings
-	    int range = siblings.size();
+	    
+	    for (Prey sib : siblings) {
+        	sib.siblings.remove(this);
+        	}
+	    
+	    /*int range = siblings.size();
+	    
 	    
 	    ArrayList<Prey> clone = new ArrayList<Prey>(siblings);
 	    for(int i=0; i< range;i++) {
 	    	Prey sib = clone.get(i);
 	    	sib.siblings.remove(this);
-	    }
+	    }*/
+	    
+	    
 	    //remove this from the inhabitants list of the shelter
 	    
 	    shelter.inhabitants.remove(this);
@@ -247,7 +260,7 @@ public class Prey extends MortalEntity
 	    	}
 	    
 	    //clear the siblings and shelter fields
-	    siblings.clear();
+	    this.siblings.clear();
 	    shelter = null;
 	    
 	}

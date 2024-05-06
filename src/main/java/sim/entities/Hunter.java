@@ -199,11 +199,18 @@ public class Hunter extends Entity
       If the positon in front of the hunter is free, then the hunter simply moves forward.
     
 If no more preys inhabiting the right shelter remain, the hunter will remain immobile for the rest of its life.*/
+		System.out.print("App: ");
+		System.out.println(appetite);
+		
+		System.out.print("Shelter: ");
+		System.out.println(shelter.toString());
+		
 		
 		if(RandomUtil.unfairBool(getMoveProbability()) && appetite >0) {
 			
 			Prey target = findClosestPrey(shelter.getInhabitants());
 
+			System.out.println(shelter.getInhabitants());
 			if(target!=null) { // thus no preys, the hunter will stay immobile
 				//to face the found prey
 				var targetDirection = this.getPosition().vectorTo(target.getPosition()); 
