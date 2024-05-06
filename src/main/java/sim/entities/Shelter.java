@@ -33,22 +33,21 @@ public class Shelter extends MortalEntity
 {
     /**
      * @invar | inhabitants != null
-     * @invar |  inhabitants.stream().allMatch(prey-> prey==null || prey.getShelter().equals(this))
+     * @invar |  inhabitants.stream().allMatch(prey-> prey==null || prey.shelter.equals(this))
 	 * @peerObjects
 	 * @representationObject
      */
     final ArrayList<Prey> inhabitants;
 
     /**
-     * 
-     *  
-	 * via super: (je moet deze ook hier vermelden zie modelopl it 2 
+     * via super: (je moet deze ook hier vermelden zie modelopl it 2 
+	 *
+	 * @throws IllegalArgumentException | world==null
 	 * @throws IllegalArgumentException | position == null
 	 * @throws IllegalArgumentException | orientation == null
-	 * MOET DIT?  throws IllegalArgumentException | Constants.SHELTER_MOVE_PROBABILITY < 0 || Constants.SHELTER_MOVE_PROBABILITY > 100
-	 * @throws IllegalArgumentException | world != null && world.getEntityAt(position)!=null
-	 * @throws IllegalArgumentException | world != null && !world.entityGrid.isValidPosition(position)
-	 *  
+	 * @throws IllegalArgumentException | world.entityGrid.at(position)!=null
+	 * @throws IllegalArgumentException | !world.entityGrid.isValidPosition(position)
+	 *
 	 * @mutates_properties | this.getWorld()
 	 * also mutates world.giveEntityGrid() (this is a very slow operation and thus not documentated in a mutates)
 	 *   
@@ -57,11 +56,14 @@ public class Shelter extends MortalEntity
 	 * @post | getOrientation().equals(orientation)
 	 * @post | getMoveProbability()==Constants.SHELTER_MOVE_PROBABILITY
 	 * 
+	 * @post | this.world.entityGrid.at(position).equals(this)
+	 * @post |  Point.isWithin(getPosition(),this.world.getWidth(),this.world.getHeight())	
+	 * 
+	 * 
 	 * @post | isDead() == false
-	 * @post | getWorld() == null || getWorld().getEntities().contains(this)
-	 * @post | getWorld() == null ||  Point.isWithin(getPosition(),getWorld().getWidth(),getWorld().getHeight())
-     * 
-     * @post | getInhabitants() != null
+	 * 
+	 * shelterspecifiek:
+     * @post | getInhabitants().equals(new ArrayList<>())
      */
     Shelter(World world, Point position, Orientation orientation)
     {

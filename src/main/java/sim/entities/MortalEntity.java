@@ -31,15 +31,13 @@ public abstract class MortalEntity extends Entity
     private boolean dead;
     
     /**
-     *  
-     *  
-	 * via super: (je moet deze ook hier vermelden zie modelopl it 2 
+     * via super: (je moet deze ook hier vermelden zie modelopl it 2 
+	 * @throws IllegalArgumentException | world==null
 	 * @throws IllegalArgumentException | position == null
 	 * @throws IllegalArgumentException | orientation == null
-	 * @throws IllegalArgumentException | moveProbability < 0 || moveProbability> 100
-	 * @throws IllegalArgumentException | world != null && world.getEntityAt(position)!=null
-	 * @throws IllegalArgumentException | world != null && !world.entityGrid.isValidPosition(position)
-	 *  
+	 * @throws IllegalArgumentException | world.entityGrid.at(position)!=null
+	 * @throws IllegalArgumentException | !world.entityGrid.isValidPosition(position)
+	 *
 	 * @mutates_properties | this.getWorld()
 	 * also mutates world.giveEntityGrid() (this is a very slow operation and thus not documentated in a mutates)
 	 *  
@@ -47,11 +45,12 @@ public abstract class MortalEntity extends Entity
 	 * @post | getPosition().equals(position)
 	 * @post | getOrientation().equals(orientation)
 	 * @post | getMoveProbability()==moveProbability
+	 * @post | this.world.entityGrid.at(position).equals(this)
+	 * @post |  Point.isWithin(getPosition(),this.world.getWidth(),this.world.getHeight())	
 	 * 
+	 * nieuw
 	 * @post | isDead() == false
-	 * @post | getWorld() == null || getWorld().getEntities().contains(this)
-	 * @post | getWorld() == null ||  Point.isWithin(getPosition(),getWorld().getWidth(),getWorld().getHeight())
-     */
+	 */
     MortalEntity(World world, Point position, Orientation orientation, int moveProbability)
     {
         super(world, position, orientation, moveProbability);
@@ -70,8 +69,8 @@ public abstract class MortalEntity extends Entity
      * also mutates old(getWorld()).giveEntityGrid() (this is a very slow operation and thus not documentated in a mutates)
 	 *  
      * @post | isDead()
-     * @post Entity is no part of world anymore| !old(getWorld()).giveEntityStream().anyMatch(ent->ent==this)
-     * @post | getWorld()==null
+     * @post Entity is no part of world anymore| !old(this.world).giveEntityStream().anyMatch(ent->ent==this)
+     * @post | this.world==null
      */
 	void diePkg() {
 		//OUD

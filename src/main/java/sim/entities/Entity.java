@@ -59,12 +59,13 @@ public abstract class Entity
 
 	/**
 	 * 
-	 * World mag null zijn wt peer object
+	 * World mag null zijn wt peer object maar bij constructie moet world gedef zijn
+	 * @throws IllegalArgumentException | world==null
 	 * @throws IllegalArgumentException | position == null
 	 * @throws IllegalArgumentException | orientation == null
 	 * @throws IllegalArgumentException | moveProbability < 0 || moveProbability> 100
-	 * @throws IllegalArgumentException | world != null && world.entityGrid.at(position)!=null
-	 * @throws IllegalArgumentException | world != null && !world.entityGrid.isValidPosition(position)
+	 * @throws IllegalArgumentException | world.entityGrid.at(position)!=null
+	 * @throws IllegalArgumentException | !world.entityGrid.isValidPosition(position)
 	 *  
 	 * @mutates_properties | this.getWorld()
 	 * also mutates world.giveEntityGrid() (this is a very slow operation and thus not documentated in a mutates)
@@ -73,17 +74,17 @@ public abstract class Entity
 	 * @post | getPosition().equals(position)
 	 * @post | getOrientation().equals(orientation)
 	 * @post | getMoveProbability()==moveProbability
-	 * @post | this.world == null || this.world.entityGrid.at(position).equals(this)
-	 * @post | this.world == null ||  Point.isWithin(getPosition(),this.world.getWidth(),this.world.getHeight())
+	 * @post | this.world.entityGrid.at(position).equals(this)
+	 * @post |  Point.isWithin(getPosition(),this.world.getWidth(),this.world.getHeight())
 	 */
 	Entity(World world, Point position, Orientation orientation, int moveProbability)
     {
-
-		if (position == null ) {throw new IllegalArgumentException();}
-		if (orientation  == null) {throw new IllegalArgumentException();}
-		if (moveProbability < 0 || moveProbability> 100) {throw new IllegalArgumentException();}
-		if (world != null && world.entityGrid.at(position)!=null) {throw new IllegalArgumentException();}
-		if (world != null && !world.entityGrid.isValidPosition(position)) {throw new IllegalArgumentException();}
+		if ( world ==null){throw new IllegalArgumentException();}
+		if ( position == null ) {throw new IllegalArgumentException();}
+		if ( orientation  == null) {throw new IllegalArgumentException();}
+		if ( moveProbability < 0 || moveProbability> 100) {throw new IllegalArgumentException();}
+		if ( world.entityGrid.at(position)!=null) {throw new IllegalArgumentException();}
+		if ( !world.entityGrid.isValidPosition(position)) {throw new IllegalArgumentException();}
 		/* OUD
     	this.world = null;
     	this.position = null;
@@ -93,7 +94,7 @@ public abstract class Entity
 		//world niet clonen want geen repr object?
 		
 		this.world = world;
-		if (world != null) {world.entityGrid.setAt(position,this);}
+		world.entityGrid.setAt(position,this);
 		
     	this.position = position;
     	this.orientation = orientation;
@@ -210,6 +211,9 @@ public abstract class Entity
      * 
      * made to ignore by compiler because this is a slow operation
      * mutates_properties  getWorld().giveEntityGrid()
+     * 
+     * 
+     * 
      * @post | Logic.implies(getWorld().isFree(old(destination())),getPosition().equals(old(destination())))
      * 
      * @post | old(getWorld()) == getWorld()
@@ -284,6 +288,11 @@ public abstract class Entity
     /**
      * Hint: only flawed methods use this method (or its children).
      * In our implementation this method is never used.
+     * 
+     * @post | result.getWorld().equals(getWorld())
+     * @post | result.getPosition().equals(getPosition())
+     * @post | result.getOrientation().equals(getOrientation())
+     * @post | result.getMoveProbability()==getMoveProbability()
      */
     public abstract Entity giveCopy();
     

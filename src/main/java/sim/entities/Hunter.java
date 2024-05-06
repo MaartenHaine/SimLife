@@ -33,6 +33,7 @@ public class Hunter extends Entity
 	 */
 	private int appetite;
 
+	//moet ik dit documenteren?
 	private Prey findClosestPrey(ArrayList<Prey> preys)
 	{
 		Prey closestPrey = null;
@@ -64,24 +65,22 @@ public class Hunter extends Entity
 	 * @throws IllegalArgumentException | shelter == null
 	 * 
 	 *  via super: (je moet deze ook hier vermelden zie modelopl it 2 
+	 *
+	 * @throws IllegalArgumentException | world==null
 	 * @throws IllegalArgumentException | position == null
 	 * @throws IllegalArgumentException | orientation == null
-	 * @throws IllegalArgumentException | world != null && world.getEntityAt(position)!=null
-	 * @throws IllegalArgumentException | world != null && !world.entityGrid.isValidPosition(position)
-	 *  ??MOET DIT ERBIJ: throws IllegalArgumentException | Constants.HUNTER_MOVE_PROBABILITY < 0 || Constants.HUNTER_MOVE_PROBABILITY> 100
+	 * @throws IllegalArgumentException | world.entityGrid.at(position)!=null
+	 * @throws IllegalArgumentException | !world.entityGrid.isValidPosition(position)
 	 *
+	 * @mutates_properties | this.getWorld(), world.giveEntityGrid()
 	 *
-	 * @mutates_properties | this.getWorld()
-	 * also mutates world.giveEntityGrid() (this is a very slow operation and thus not documentated in a mutates)
-	 *  
-	 * 
 	 * @post | world == getWorld()
 	 * @post | getPosition().equals(position)
 	 * @post | getOrientation().equals(orientation)
 	 * @post | getMoveProbability()==Constants.HUNTER_MOVE_PROBABILITY
-	 * @post | getWorld() == null || getWorld().getEntities().contains(this)
-	 * @post | getWorld() == null || Point.isWithin(getPosition(),getWorld().getWidth(),getWorld().getHeight())
-	 * 
+	 * @post | this.world.entityGrid.at(position).equals(this)
+	 * @post | Point.isWithin(getPosition(),this.world.getWidth(),this.world.getHeight())
+	* 
 	 * @post The hunter will have Constants.HUNTER_INITIAL_APPETITE appetite
 	 * 
 	 */
@@ -96,11 +95,12 @@ public class Hunter extends Entity
 	 * @throws IllegalArgumentException | appetite <= 0
 	 * 	
 	 *  via super: (je moet deze ook hier vermelden zie modelopl it 2 
+	 *
+	 * @throws IllegalArgumentException | world==null
 	 * @throws IllegalArgumentException | position == null
 	 * @throws IllegalArgumentException | orientation == null
-	 * @throws IllegalArgumentException | world != null && world.getEntityAt(position)!=null
-	 * @throws IllegalArgumentException | world != null && !world.entityGrid.isValidPosition(position)
-	 *  ??MOET DIT ERBIJ: throws IllegalArgumentException | Constants.HUNTER_MOVE_PROBABILITY < 0 || Constants.HUNTER_MOVE_PROBABILITY> 100
+	 * @throws IllegalArgumentException | world.entityGrid.at(position)!=null
+	 * @throws IllegalArgumentException | !world.entityGrid.isValidPosition(position)
 	 *
 	 * @mutates_properties | this.getWorld(), world.giveEntityGrid()
 	 *
@@ -108,9 +108,9 @@ public class Hunter extends Entity
 	 * @post | getPosition().equals(position)
 	 * @post | getOrientation().equals(orientation)
 	 * @post | getMoveProbability()==Constants.HUNTER_MOVE_PROBABILITY
-	 * @post | getWorld() == null || getWorld().getEntities().contains(this)
-	 * @post | getWorld() == null || getWorld().entityGrid.isValidPosition(getPosition())
-	 * 
+	 * @post | this.world.entityGrid.at(position).equals(this)
+	 * @post | Point.isWithin(getPosition(),this.world.getWidth(),this.world.getHeight())
+	* 
 	 * @post The hunter will have an appetite as is given as argument
 	 */
 	Hunter(World world, Shelter shelter, Point position, Orientation orientation, int appetite)

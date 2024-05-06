@@ -103,11 +103,7 @@ public class Prey extends MortalEntity
      * @peerObject
      */
     Shelter shelter;
-    
-
-    
-
-    
+   
     /**
      * @post | result == true
      */
@@ -118,7 +114,6 @@ public class Prey extends MortalEntity
 	}
 	/**
 	 * 
-	 * @throws IllegalArgumentException | world == null
 	 * @throws IllegalArgumentException | chromosome == null
 	 * @throws IllegalArgumentException | shelter == null
 	 * 
@@ -131,29 +126,28 @@ public class Prey extends MortalEntity
 	 * @post score of the prey is zero
 	 * @post the siblings arrayList of a prey is not null, however it can be empty
 	 * @post every sibling in the siblings arrayList has this as sibling as well
-	 * @post | getShelter() == null  || getShelter().getInhabitants().contains(this) 
+	 * @post | this.shelter.inhabitants.contains(this) 
 	 *  
 	 * 
 	 * 
 	 * ENTITY ALGEMEEN
-	 * World mag null zijn wt peer object
+	 * 
+	 * @throws IllegalArgumentException | world==null
 	 * @throws IllegalArgumentException | position == null
 	 * @throws IllegalArgumentException | orientation == null
-  ??MOET DIT ERBIJ: throws IllegalArgumentException | Constants.HUNTER_MOVE_PROBABILITY < 0 || Constants.HUNTER_MOVE_PROBABILITY> 100
+	 * @throws IllegalArgumentException | world.entityGrid.at(position)!=null
+	 * @throws IllegalArgumentException | !world.entityGrid.isValidPosition(position)
 	 *
-	 * @throws IllegalArgumentException | world != null && world.getEntityAt(position)!=null
-	 * @throws IllegalArgumentException | world != null && !world.entityGrid.isValidPosition(position)
-	 *  
 	 * @mutates_properties | this.getWorld()
 	 * also mutates world.giveEntityGrid() (this is a very slow operation and thus not documentated in a mutates)
-	 *   
+	 *  
 	 *  
 	 * @post | world == getWorld()
 	 * @post | getPosition().equals(position)
 	 * @post | getOrientation().equals(orientation)
 	 * @post | getMoveProbability()==Constants.PREY_MOVE_PROBABILITY
-	 * @post | getWorld() == null || getWorld().getEntities().contains(this)
-	 * @post | getWorld() == null ||  Point.isWithin(getPosition(),getWorld().getWidth(),getWorld().getHeight())
+	 * @post | this.world.entityGrid.at(position).equals(this)
+	 * @post |  Point.isWithin(getPosition(),this.world.getWidth(),this.world.getHeight())	
 	 * 
 	 * @post | isDead() == false
 	 */
@@ -222,8 +216,8 @@ public class Prey extends MortalEntity
      * 
      * SUPER:
      * @post | isDead()
-     * @post Entity is no part of world anymore| !old(getWorld()).giveEntityStream().anyMatch(ent->ent==this)
-     * @post | getWorld()==null
+     * @post Entity is no part of world anymore | !old(this.world).giveEntityStream().anyMatch(ent->ent==this)
+     * @post | this.world==null
      */
 	@Override
 	void diePkg()
