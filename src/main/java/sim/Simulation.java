@@ -94,7 +94,7 @@ public class Simulation
 		
 		
 		RandomUtil.shuffle(positions);
-		System.out.println(positions.size());	
+		//System.out.println(positions.size());	
 		
 		for (int i = 0; i < shelterCount; i++)
 		{
