@@ -65,7 +65,7 @@ public abstract class Entity
 	 * @throws IllegalArgumentException | moveProbability < 0 || moveProbability> 100
 	 * @throws IllegalArgumentException | !world.entityGrid.isValidPosition(position)
 	 *  
-	 * @mutates_properties | this.getWorld()
+	 * mutates_properties | this.getWorld()
 	 * also mutates world.giveEntityGrid() (this is a very slow operation and thus not documentated in a mutates)
 	 *  
 	 * @post | Logic.implies(old(world).entityGrid.at(position)==null, world == this.world)
