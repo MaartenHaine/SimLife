@@ -327,14 +327,14 @@ class FlawDetectingTests {
 		ActivationFunctionNeuron afn = new LinearFunctionNeuron();
 		SensorNeuron hon = new FreePassageSensorNeuron(Orientation.createRandom());
 		var arlist = new ArrayList<Pair<Neuron, Integer>>();
-		for (int i = 0 ; i < 7  ; i++) {
+		for (int i = 0 ; i < 5  ; i++) {
 			arlist.add(new Pair<Neuron, Integer>(hon, i));
 		}
 		
 		afn.setDependencies(arlist);
 		
-		assertEquals(false, afn.connect(hon, 7));
-		for (int i = 0 ; i < 7 ; i++) {
+		assertEquals(false, afn.connect(hon, 5));
+		for (int i = 0 ; i < 5 ; i++) {
 			int val = afn.getDependencies().get(i).getSecond();
 			assertEquals(i , val);
 		}
