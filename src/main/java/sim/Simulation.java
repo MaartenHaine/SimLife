@@ -55,6 +55,7 @@ public class Simulation
 
     public Simulation(int worldSize, int shelterCount, int inhabitantsPerShelter, int huntersPerShelter)
     {
+    	if (shelterCount < 0 || worldSize < 0 || huntersPerShelter < 0 || inhabitantsPerShelter < 0) { throw new IllegalArgumentException(); }
     	this.worldSize = worldSize;
     	this.shelterCount = shelterCount;
     	this.preyCount = shelterCount*inhabitantsPerShelter;

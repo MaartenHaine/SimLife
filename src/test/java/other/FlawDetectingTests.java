@@ -1,23 +1,20 @@
 package other;
 
 import static org.junit.jupiter.api.Assertions.*;
-
+import java.util.ArrayList;
 import java.util.stream.IntStream;
 
 
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
+import sim.Constants;
 import sim.Chromosome;
-import sim.entities.Hunter;
-import sim.entities.MortalEntity;
-import sim.entities.Prey;
-import sim.entities.Shelter;
-import sim.entities.World;
-import util.Grid;
-import util.Orientation;
-import util.Point;
-import sim.entities.Entity;
+import sim.Simulation;
+import sim.entities.*;
+import sim.neuralnet.*;
+import util.*;
 
 /**
  * All flaw detecting tests should go in here
@@ -156,5 +153,196 @@ class FlawDetectingTests {
 	// =================================
 	// 		END OF ENTITY FLAWS
 	// =================================
+
+	// =================================
+	// 			CHROMOSOME FLAWS
+	// =================================
+	
+	@Test
+	/**
+	 * FLAW1
+	 * The `weights` array reference is encapsulated by Chromosome constructor
+	 */
+	void chromosomeEncapsIn() {
+		int[] weights = new int[Constants.CHROM_SIZE];
+		for (int i = 0 ; i < weights.length ; i++) {
+			weights[i] = Constants.GENE_MIN;
+		}
+		
+		Chromosome chrom = new Chromosome(weights);
+		weights[0] = Constants.GENE_MAX;
+		
+		assertNotEquals( Constants.GENE_MAX , chrom.getGene(0));
+	}
+	
+	// =================================
+	// 		END OF CHROMOSOME FLAWS
+	// =================================
+
+	// =================================
+	// 			SIMULATION FLAWS
+	// =================================
+	
+	@Test
+	/**
+	 * FLAW1
+	 * Simulation test if defensive is ok
+	 */
+	void SimulationDefensive() {
+		assertThrows(IllegalArgumentException.class, () ->new Simulation(-1, 1, 1, 1) );
+		assertThrows(IllegalArgumentException.class, () ->new Simulation(1, -1, 1, 1) );
+		assertThrows(IllegalArgumentException.class, () ->new Simulation(1, 1, -1, 1) );
+		assertThrows(IllegalArgumentException.class, () ->new Simulation(1, 1, 1, -1) );
+		assertThrows(IllegalArgumentException.class, () ->new Simulation(-1, -1, 1, 1) );
+		assertThrows(IllegalArgumentException.class, () ->new Simulation(1, -1, -1, 1) );
+		assertThrows(IllegalArgumentException.class, () ->new Simulation(1, 1, -1, -1) );
+		assertThrows(IllegalArgumentException.class, () ->new Simulation(-1, 1, 1, -1) );
+		assertThrows(IllegalArgumentException.class, () ->new Simulation(-1, -1, 1, -1) );
+		assertThrows(IllegalArgumentException.class, () ->new Simulation(1, -1, -1, 1) );
+		assertThrows(IllegalArgumentException.class, () ->new Simulation(-1, 1, -1, 1) );
+		assertThrows(IllegalArgumentException.class, () ->new Simulation(-1, 1, -1, -1) );
+		assertThrows(IllegalArgumentException.class, () ->new Simulation(-1, -1, -1, -1) );
+		}
+	
+	
+	// =================================
+	// 			SIMULATION FLAWS
+	// =================================
+	
+	
+	
+	// ===================================
+	// 			NEURALNETWORKS FLAWS
+	// ===================================
+	
+	@Nested
+	class EncapsulationNN {
+		@Test
+		/**
+		 * FLAW1
+		 * The ArrayList reference is encapsulated
+		 */
+		void activationFunctionNeuronEncapsOut1() {
+			ActivationFunctionNeuron aneuron = new LinearFunctionNeuron();
+			ArrayList<Pair<Neuron, Integer>> leak = aneuron.getDependencies();
+			leak.add(new Pair<Neuron, Integer>(new FreePassageSensorNeuron(Orientation.createRandom()),500));
+			assertTrue(aneuron.getDependencies().isEmpty() );
+		}
+		
+		@Test
+		/**
+		 * FLAW2
+		 * Each Pair reference in the array list field is encaspulated
+		 */
+		void activationFunctionNeuronEncapsOut2() {
+			ActivationFunctionNeuron aneuron = new LinearFunctionNeuron();
+			aneuron.connect(new FreePassageSensorNeuron(Orientation.createRandom()),500);
+			
+			assertEquals(1, aneuron.getDependencies().size());
+			
+			Pair<Neuron, Integer> leak = aneuron.getDependencies().get(0);
+			leak.setSecond(600);
+			
+			assertNotEquals(600, aneuron.getDependencies().get(0).getSecond());
+		}
+		
+		@Test
+		/**
+		 * FLAW3
+		 * Similar to FLAW1 but now using the chromosome itself that has been put in instead of the on that gets copied
+		 */
+		void activationFunctionNeuronEncapsIn() {
+			ActivationFunctionNeuron afn = new LinearFunctionNeuron();
+			SensorNeuron hon = new FreePassageSensorNeuron(Orientation.createRandom());
+			
+			var arlist = new ArrayList<Pair<Neuron, Integer>>();
+			arlist.add(new Pair<Neuron, Integer>(hon, 0));
+			
+			afn.setDependencies(arlist);
+			
+			assertEquals(1, afn.getDependencies().size());
+			arlist.clear();
+			assertEquals(1, afn.getDependencies().size());
+			
+		}
+		
+		@Test
+		/**
+		 * FLAW4
+		 * Same as FLAW2 But using the input itself similar to FLAW3
+		 */
+		void activationFunctionNeuronEncapsIn2() {
+			ActivationFunctionNeuron afn = new LinearFunctionNeuron();
+			SensorNeuron hon = new FreePassageSensorNeuron(Orientation.createRandom());
+			var arlist = new ArrayList<Pair<Neuron, Integer>>();
+			arlist.add(new Pair<Neuron, Integer>(hon, 0));
+			
+			afn.setDependencies(arlist);
+			
+			Pair<Neuron, Integer> p = arlist .get(0);
+			p.setSecond(50);
+			
+			assertNotEquals(50, afn.getDependencies().get(0).getSecond());
+		}
+	
+	
+		
+		@Test
+		/**
+		 * FLAW5
+		 * The array reference NeuralNetwork.inputLayerNeurons must be encapsulated
+		 */
+		void neuralNetworkEncapsOut() {
+			NeuralNetwork nnet = new NeuralNetwork();
+			SensorNeuron[] inputNeurons = nnet.getInputNeurons();
+			assertTrue(inputNeurons.length > 0);
+			assertNotNull(inputNeurons[0]);
+			
+			inputNeurons[0] = null;
+			assertNotNull(nnet.getInputNeurons()[0]);
+		}
+	}
+	
+	@Nested
+	class DefensiveNN {
+		
+		@Test
+		/**
+		 * FLAW6
+		 */
+		void freePassageSensorNeuronDefensive() {
+			assertThrows(IllegalArgumentException.class, () ->new FreePassageSensorNeuron(null) );
+		}
+	}
+	
+	@Test
+	/**
+	 * FLAW7
+	 * 
+	 * Connecting with a Neuron when the list is full should have no effect and return false
+	 * 
+	 * flaw: return true anyway
+	 */
+	void activationFunctionNeuronConnectUpholdsInvar() {
+		ActivationFunctionNeuron afn = new LinearFunctionNeuron();
+		SensorNeuron hon = new FreePassageSensorNeuron(Orientation.createRandom());
+		var arlist = new ArrayList<Pair<Neuron, Integer>>();
+		for (int i = 0 ; i < 7  ; i++) {
+			arlist.add(new Pair<Neuron, Integer>(hon, i));
+		}
+		
+		afn.setDependencies(arlist);
+		
+		assertEquals(false, afn.connect(hon, 7));
+		for (int i = 0 ; i < 7 ; i++) {
+			int val = afn.getDependencies().get(i).getSecond();
+			assertEquals(i , val);
+		}
+	}
+	// ======================================
+	// 		END OF NEURALNETWORKS FLAWS
+	// ======================================
+
+
 
 }
