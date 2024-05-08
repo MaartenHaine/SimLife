@@ -17,7 +17,6 @@ class NeuralNetworkTests {
 		NeuralNetwork network = new NeuralNetwork();
 		SensorNeuron[] inputNeurons = network.getInputNeurons();
 		ActivationFunctionNeuron[] outputNeurons =network.getOutputNeurons();
-		System.out.println(outputNeurons);
 		
 		assertTrue(Arrays.stream(inputNeurons).allMatch(n->n!=null));
 		assertTrue(Arrays.stream(outputNeurons).allMatch(n->n!=null));
