@@ -116,6 +116,8 @@ public class Prey extends MortalEntity
 	 * 
 	 * @throws IllegalArgumentException | chromosome == null
 	 * @throws IllegalArgumentException | shelter == null
+	 * @throws IllegalArgumentException | shelter.isDead()
+	 * 
 	 * 
      * mutates_properties | shelter.getInhabitants(), this.getShelter()
 	 * 
@@ -157,7 +159,7 @@ public class Prey extends MortalEntity
 
 
         if ( chromosome == null || world == null || shelter == null || position == null
-        		|| orientation == null )
+        		|| orientation == null || shelter.isDead()) // ADDED SHELTER IS DEAD
         {
             throw new IllegalArgumentException();
         }

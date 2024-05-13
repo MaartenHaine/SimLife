@@ -21,7 +21,7 @@ import static util.Logic.*
  * @invar | getHunters() != null
  * @invar the shelter that hunter is focused on is in World
  * @invar Every hunter is in the entityGrid 
- * | getHunters().stream().allMatch(h ->  giveEntityStream().anyMatch(e-> h.equals(e)))
+ * | getHunters().stream().allMatch(h ->  getEntities().contains( h))
  */
 public class World
 {

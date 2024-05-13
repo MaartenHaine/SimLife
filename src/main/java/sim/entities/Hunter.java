@@ -56,7 +56,7 @@ public class Hunter extends Entity
 	/**
 	 * @invar | shelter != null
 	 * SHELTER KAN NIET NAAR HUNTER WIJZEN?
-	 * @invar | shelter.world.hunters.contains(this)
+	 * @invar | shelter.world==null  || shelter.world.hunters.contains(this)
 	 * @peerObject
 	 */
 	final Shelter shelter;
@@ -166,8 +166,11 @@ public class Hunter extends Entity
 		return String.format("Hunter(position=%s)", this.getPosition());
 	}
     /**
-     * DIT MOET NOG UITGEBREID WORDEN 
-     * 
+     * @post checks if the hunter should attempt to move and hunt prey randomly based on a getMoveProbability
+     * and its current appetite level (should be higher than zero). If the conditions are met, the hunter searches for the closest prey
+     * among the inhabitants of its shelter. If a prey is found, the hunter adjusts its orientation to face
+     * the prey and moves towards it. If the hunter is next to the prey's position, the prey is eliminated from the world
+     * grid, and the hunter's appetite decreases.
      * @post | old(getWorld()) == getWorld()
 	 * @post | getMoveProbability()==old(getMoveProbability())
      */
