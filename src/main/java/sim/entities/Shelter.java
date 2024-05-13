@@ -81,12 +81,12 @@ public class Shelter extends MortalEntity
 	}
 
     /**
-     * @post | result == false
+     * @post | result == true
      */
 	@Override
 	boolean isShelterPkg()
 	{
-	    return false;
+	    return true;
 	}
 
     /**

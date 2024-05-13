@@ -1,6 +1,7 @@
 package sim.neuralnet;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.stream.IntStream;
 import util.Pair;
 import static util.Logic.*;
@@ -77,11 +78,9 @@ public abstract class ActivationFunctionNeuron implements Neuron
      * @mutates | this
      * @pre | dependency != null
      * @post | implies(old(getDependencies().size()) == 5, result == false)
-     * @post | implies(old(getDependencies().size()) < 5, (result == true)&&(getDependencies().contains(new Pair<Neuron, Integer>(dependency, weight))))
+     * @post | implies(old(getDependencies().size()) < 5, ((result == true)&&(getDependencies().stream().anyMatch(e->e.getFirst().equals(dependency) && e.getSecond()==weight))))
      * @post | getDependencies().size() == old(getDependencies().size()) + (result ? 1 : 0)
      * */
-
-
     public boolean connect(Neuron dependency, int weight)
     {
     	if (dependencies.size() == 5)

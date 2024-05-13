@@ -81,9 +81,9 @@ public abstract class Entity
 		if ( position == null ) {throw new IllegalArgumentException();}
 		if ( orientation  == null) {throw new IllegalArgumentException();}
 		if ( moveProbability < 0 || moveProbability> 100) {throw new IllegalArgumentException();}
-		if ( world.entityGrid.at(position)!=null) {throw new IllegalArgumentException();}
 		if ( !world.entityGrid.isValidPosition(position)) {throw new IllegalArgumentException();}
-		
+		if ( world.entityGrid.at(position)!=null) {throw new IllegalArgumentException();}
+
 		/* OUD
     	this.world = null;  
     	this.position = null;
@@ -100,6 +100,7 @@ public abstract class Entity
 			this.world = world;
 			}
 		*/
+		this.world = world;
 		this.world.entityGrid.setAt(position,this);
 		
     	this.position = position;
