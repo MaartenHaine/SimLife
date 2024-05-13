@@ -226,6 +226,7 @@ public class World
 	 * @throws IllegalArgumentException | position == null
 	 * @throws IllegalArgumentException | orientation == null
 	 * @throws IllegalArgumentException | !this.giveEntityGrid().isValidPosition(position)
+	 * @throws IllegalArgumentException | this.getEntityAt(position)!=null
 	 *
 	 * @creates | result
 	 * mutates_properties | this.giveEntityStream(), this.getHunters()
@@ -261,6 +262,7 @@ public class World
 	 * @throws IllegalArgumentException | position == null
 	 * @throws IllegalArgumentException | orientation == null
 	 * @throws IllegalArgumentException | !this.giveEntityGrid().isValidPosition(position)
+	 * @throws IllegalArgumentException | this.getEntityAt(position)!=null
 	 *
 	 * @creates | result
 	 * also mutates world.giveEntityGrid() (this is a very slow operation and thus not documentated in a mutates)

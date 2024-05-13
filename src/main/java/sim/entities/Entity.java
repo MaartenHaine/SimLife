@@ -64,7 +64,7 @@ public abstract class Entity
 	 * @throws IllegalArgumentException | orientation == null
 	 * @throws IllegalArgumentException | moveProbability < 0 || moveProbability> 100
 	 * @throws IllegalArgumentException | !world.entityGrid.isValidPosition(position)
-	 *  
+	 * @throws IllegalArgumentException | world.entityGrid.at(position)!=null
 	 * mutates_properties | this.getWorld()
 	 * also mutates world.giveEntityGrid() (this is a very slow operation and thus not documentated in a mutates)
 	 *  
@@ -81,7 +81,7 @@ public abstract class Entity
 		if ( position == null ) {throw new IllegalArgumentException();}
 		if ( orientation  == null) {throw new IllegalArgumentException();}
 		if ( moveProbability < 0 || moveProbability> 100) {throw new IllegalArgumentException();}
-		//if ( world.entityGrid.at(position)!=null) {throw new IllegalArgumentException();}
+		if ( world.entityGrid.at(position)!=null) {throw new IllegalArgumentException();}
 		if ( !world.entityGrid.isValidPosition(position)) {throw new IllegalArgumentException();}
 		
 		/* OUD
@@ -92,12 +92,14 @@ public abstract class Entity
     	*/
 		
 		//world niet clonen want geen repr object?
+		
+		/* MOET NIET, GIVE COPY WORDT NOOIT GEBRUIKT
 		if ( world.entityGrid.at(position)!=null) {
 			this.world = new World(world.getWidth(),world.getHeight());
 		}else{
 			this.world = world;
 			}
-		
+		*/
 		this.world.entityGrid.setAt(position,this);
 		
     	this.position = position;

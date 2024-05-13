@@ -36,6 +36,7 @@ public abstract class MortalEntity extends Entity
 	 * @throws IllegalArgumentException | position == null
 	 * @throws IllegalArgumentException | orientation == null
 	 * @throws IllegalArgumentException | !world.entityGrid.isValidPosition(position)
+	 * @throws IllegalArgumentException | world.entityGrid.at(position)!=null
 	 *
 	 * mutates_properties | this.getWorld()
 	 * also mutates world.giveEntityGrid() (this is a very slow operation and thus not documentated in a mutates)
