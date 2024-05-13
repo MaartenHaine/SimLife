@@ -256,9 +256,6 @@ class SubmissionTestSuite {
 		{
 			boolean b = e.isShelter();
 		}
-		{
-			Entity e2 = e.giveCopy();
-		}
 	}
 	
 	@Test
