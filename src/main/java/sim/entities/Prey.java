@@ -318,14 +318,15 @@ public class Prey extends MortalEntity
 
     /**
      * 
-     * @post returns true when this score is strictly greater than zero
+     * @post returns true when this score is strictly greater than zero and th creature is alive
      */
     public boolean survives()
     {
     	/* OLD
     	return false;
     	*/
-    	return score>0;
+    	
+    	return score>0 && isAlivePkg();
     }
 
     /**
