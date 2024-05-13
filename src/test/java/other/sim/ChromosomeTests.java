@@ -14,13 +14,13 @@ import sim.Constants;
 class ChromosomeTests {
 
 	@Test
-	public void nullWeights()
+	void testnNullWeights()
 	{
 		assertThrows(IllegalArgumentException.class, () -> new Chromosome(null));
 	}
 	
 	@Test
-	public void invalidSize()
+	void testInvalidSize()
 	{
 		var genes = new int[Constants.CHROM_SIZE + 1];
 		Arrays.fill(genes, Constants.GENE_MIN);
@@ -28,7 +28,7 @@ class ChromosomeTests {
 	}
 		
 	@Test
-	public void invalidGenes()
+	void testInvalidGenes()
 	{
 		var genes = new int[Constants.CHROM_SIZE];
 		Arrays.fill(genes, Constants.GENE_MIN-1);
@@ -37,13 +37,13 @@ class ChromosomeTests {
 	
 
 	@Test
-	public void isEqualOnSameChromosome()
+	void testIsEqualOnSameChromosome()
 	{
 		var chromosome = Chromosome.createRandom();	
 		assertTrue(chromosome.isEqual(chromosome));
 	}
 	@Test
-	public void isEqualOnEqualChromosomes()
+	void testIsEqualOnEqualChromosomes()
 	{	
 		//give random weights with genes interval
 		int[] weights = new int[Constants.CHROM_SIZE];
@@ -59,7 +59,7 @@ class ChromosomeTests {
 	}
 		
 	@Test
-	public void isEqualOnChromosomesWithDifferentGenes()
+	void testIsEqualOnChromosomesWithDifferentGenes()
 	{
 		int[] weights = new int[Constants.CHROM_SIZE];
 		for (int i = 0; i < Constants.CHROM_SIZE; i++)
@@ -74,14 +74,14 @@ class ChromosomeTests {
 	}
 		
 	@Test
-	public void isEqualOnNull()
+	void testIsEqualOnNull()
 	{
 		var chromosome = Chromosome.createRandom();		
 		assertFalse(chromosome.isEqual(null));
 	}
 
 	@Test
-	public void matchesUntil()
+	void testMatchesUntil()
 	{
 		var chromosome1 = Chromosome.createRandom();
 		var chromosome2 = chromosome1.mutate(1, 1);
@@ -91,7 +91,7 @@ class ChromosomeTests {
 	}
 	
 	@Test
-	public void matchesFrom()
+	void testMatchesFrom()
 	{
 		var chromosome1 = Chromosome.createRandom();
 		var chromosome2 = chromosome1.mutate(0, 1);
@@ -101,7 +101,7 @@ class ChromosomeTests {
 	}
 	
 	@Test
-	public void mutate()
+	void testMutate()
 	{
 		var chromosome = Chromosome.createRandom();
 		var mutated = chromosome.mutate(0, 1);
@@ -109,7 +109,7 @@ class ChromosomeTests {
 	}
 	
 	@Test
-	public void mutateMin()
+	void testMutateMin()
 	{
 		var genes = new int[Constants.CHROM_SIZE];
 		Arrays.fill(genes, Constants.GENE_MIN);
@@ -119,7 +119,7 @@ class ChromosomeTests {
 	}
 	
 	@Test
-	public void mutateMax()
+	void testMutateMax()
 	{
 		var genes = new int[Constants.CHROM_SIZE];
 		Arrays.fill(genes, Constants.GENE_MAX);
@@ -129,7 +129,7 @@ class ChromosomeTests {
 	}
 
 	@Test
-	void crossover2() {
+	void testCrossover2() {
 		ArrayList<Chromosome> c = Chromosome.createRandom(2);
 		Chromosome c3 = c.get(0).crossover2(c.get(1));
 		assertTrue(c3.matchesUntil(c.get(0), 6) || c3.matchesUntil(c.get(1), 6));
@@ -142,5 +142,13 @@ class ChromosomeTests {
 		Chromosome c_new = c.randomlyMutate();
 		assertFalse(c_new.isEqual(c));
 	}
+	
+	@Test
+	void testOnlyDiffersAt() {
+		Chromosome c = Chromosome.createRandom();
+		Chromosome c_new = c.mutate(0, 1);
+		assertTrue(c.onlyDiffersAt(c_new, 0));
+	}
+	
 
 }

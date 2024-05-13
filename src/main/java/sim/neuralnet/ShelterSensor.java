@@ -2,6 +2,12 @@ package sim.neuralnet;
 
 import sim.entities.Prey;
 
+/**
+ * @immutable
+ * 
+ * @post check if orientation of the pray is the same as the shortest one to the shelter 
+ * | prey.getOrientation().isEqual(prey.getPosition().vectorTo(prey.getShelter().getPosition()).toClosestOrientation())
+ */
 public class ShelterSensor extends BinarySensorNeuron
 {
 	@Override
