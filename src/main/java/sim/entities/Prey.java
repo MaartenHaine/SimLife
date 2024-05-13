@@ -22,17 +22,17 @@ import static util.Logic.*;
  * 
  *  MortalEntity invars
  * @invar | Logic.implies(isDead(),getWorld()==null)
- * @invar | Logic.implies(!isDead(),getWorld() !=null && getWorld().getEntities().contains(this))
+ * invar | Logic.implies(!isDead(),getWorld() !=null && getWorld().getEntities().contains(this))
  *  
  *  
  * ENTITY INVARS 
  * @invar | getPosition()!=null
  * @invar | getOrientation() != null
  * @invar | 0 <=getMoveProbability() && getMoveProbability()  <= 100
- * @invar if an entity is in a world, the world contains that entity  
- * | getWorld() ==null ||  getWorld().getEntities().contains(this)
- * @invar Entity positie komt overeen met hun positie in world
- * | getWorld() == null || getWorld().getEntityAt(this.getPosition()).equals(this)
+ * invar if an entity is in a world, the world contains that entity  
+ *  getWorld() ==null ||  getWorld().getEntities().contains(this)
+ * invar Entity positie komt overeen met hun positie in world
+ *  getWorld() == null || getWorld().getEntityAt(this.getPosition()).equals(this)
  * @invar | getWorld() == null ||  Point.isWithin(getPosition(),getWorld().getWidth(),getWorld().getHeight())
  * @invar| getColor()!=null
  */
@@ -146,8 +146,8 @@ public class Prey extends MortalEntity
 	 * @post | getPosition().equals(position)
 	 * @post | getOrientation().equals(orientation)
 	 * @post | getMoveProbability()==Constants.PREY_MOVE_PROBABILITY
-	 * @post | this.world.entityGrid.at(position).equals(this)
-	 * post   Point.isWithin(getPosition(),this.world.getWidth(),this.world.getHeight())	
+	 * post  this.world.entityGrid.at(position).equals(this)
+	 * @post | Point.isWithin(getPosition(),this.world.getWidth(),this.world.getHeight())	
 	 * 
 	 * @post | isDead() == false
 	 */

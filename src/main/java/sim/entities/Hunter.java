@@ -80,7 +80,7 @@ public class Hunter extends Entity
 	 * @post | getPosition().equals(position)
 	 * @post | getOrientation().equals(orientation)
 	 * @post | getMoveProbability()==Constants.HUNTER_MOVE_PROBABILITY
-	 * @post | this.world.entityGrid.at(position).equals(this)
+	 * post | this.world.entityGrid.at(position).equals(this)
 	 * @post | Point.isWithin(getPosition(),this.world.getWidth(),this.world.getHeight())
 	* 
 	 * @post The hunter will have Constants.HUNTER_INITIAL_APPETITE appetite
@@ -110,8 +110,8 @@ public class Hunter extends Entity
 	 * @post | getPosition().equals(position)
 	 * @post | getOrientation().equals(orientation)
 	 * @post | getMoveProbability()==Constants.HUNTER_MOVE_PROBABILITY
-	 * @post | this.world.entityGrid.at(position).equals(this)
-	 * post Point.isWithin(getPosition(),this.world.getWidth(),this.world.getHeight())
+	 * post | this.world.entityGrid.at(position).equals(this)
+	 * @post Point.isWithin(getPosition(),this.world.getWidth(),this.world.getHeight())
 	* 
 	 * @post The hunter will have an appetite as is given as argument
 	 */

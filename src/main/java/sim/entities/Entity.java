@@ -29,7 +29,7 @@ public abstract class Entity
 
 
 	/**
-	 * @invar Entity positie komt overeen met hun positie in world
+	 * invar Entity positie komt overeen met hun positie in world
 	 * | world == null || world.entityGrid.at(position)==this	
 	 * @invar | position !=null
 	 * @invar | world == null || world.entityGrid.isValidPosition(position)
@@ -49,7 +49,7 @@ public abstract class Entity
 
     /**
      *  
-     * @invar if an entity is in a world, the world contains that entity 
+     * invar if an entity is in a world, the world contains that entity 
      * | world == null || 
      * | world.entityGrid.givePositionStream().map(pos -> world.entityGrid.at(pos)).anyMatch(ent -> ent ==this)
 	 * @peerObject
@@ -72,7 +72,7 @@ public abstract class Entity
 	 * @post | getPosition().equals(position)
 	 * @post | getOrientation().equals(orientation)
 	 * @post | getMoveProbability()==moveProbability
-	 * @post | this.world.entityGrid.at(position).equals(this)
+	 * post | this.world.entityGrid.at(position).equals(this)
 	 * @post | Point.isWithin(getPosition(),this.world.getWidth(),this.world.getHeight())
 	 */
 	Entity(World world, Point position, Orientation orientation, int moveProbability)
@@ -101,7 +101,7 @@ public abstract class Entity
 			}
 		*/
 		this.world = world;
-		this.world.entityGrid.setAt(position,this);
+		// DIT WORDT GEDAAN DOOR CREATE CREATURE ENZ this.world.entityGrid.setAt(position,this);
 		
     	this.position = position;
     	this.orientation = orientation;
@@ -265,6 +265,9 @@ public abstract class Entity
 
 	/**
      * Returns the color of the entity.
+     * @post| Logic.implies(isPrey(),result==(Color.GREEN))
+     * @post| Logic.implies(isHunter(),result==(Color.RED))
+     * @post| Logic.implies(isShelter(),result==(Color.BLACK))
      */
     public abstract Color getColor();
     

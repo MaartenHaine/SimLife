@@ -7,6 +7,7 @@ import org.junit.jupiter.api.Test;
 
 import sim.Chromosome;
 import sim.Constants;
+import util.Color;
 import util.Orientation;
 import util.Point;
 
@@ -48,7 +49,7 @@ class EntityTest {
         assertEquals(Orientation.north(), s.getOrientation());
         assertEquals(Constants.SHELTER_MOVE_PROBABILITY, s.getMoveProbability());
         assertEquals(s, world10.getEntityAt(validPosition));
-        assertTrue(Point.isWithin(validPosition, world10.getWidth(), world10.getHeight()));
+        assertTrue(Point.isWithin(s.getPosition(), world10.getWidth(), world10.getHeight()));
     }
 	
 	@Test
@@ -363,6 +364,27 @@ class EntityTest {
 		 assertFalse(p.isShelter());
 		 assertFalse(h.isShelter());
 		 assertTrue(s.isShelter());
+	
+	}
+	@Test
+	void getColorTest() {
+
+		 
+		 Point shelterPos = new Point(0, 0);
+		 Point hunterPos = new Point(5,5);
+		 Point preyPos = new Point(9,9);
+		 
+		 Shelter s= world10.createShelter(shelterPos, Orientation.createRandom()); 
+		 Hunter h = world10.createHunter(s, hunterPos, Orientation.createRandom());
+		 Prey p = world10.createPrey(s, Chromosome.createRandom() ,preyPos, Orientation.createRandom());
+		 
+		
+		 assertEquals(s.getColor(),Color.BLACK);
+		 assertEquals(h.getColor(),Color.RED);
+		 assertEquals(p.getColor(),Color.GREEN);
+
+			
+			
 	
 	}
 	
