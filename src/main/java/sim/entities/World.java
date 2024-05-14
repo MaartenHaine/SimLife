@@ -75,7 +75,8 @@ public class World
 	 * 
 	 * @post | getHeight() == height
 	 * @post giveEntityGrid().getHeight() == height (this takes long to execute thus made informally to be ignored by compiler)
-	 * 
+	 * @post | getHunters().isEmpty()
+	 * @post | getEntities().isEmpty()
 	 * @post | numberOfEntities() == 0
 	 */
 	public World(int width, int height)
@@ -84,6 +85,7 @@ public class World
 		this.entityGrid = null;
 		this.hunters = null;
 		*/
+		// The grid checks the width and height
 		this.entityGrid = new Grid<Entity>(width,height);
 		this.hunters = new ArrayList<Hunter>();
 		
@@ -110,6 +112,7 @@ public class World
 	 * @creates | result,... result
 	 * @post| result!=null
 	 * @post | result.stream().allMatch(ent1-> getEntityAt(ent1.getPosition()).equals(ent1))
+	 * @post 
 	 */
 	public List<Entity> getEntities()
 	{
@@ -204,6 +207,7 @@ public class World
 		this.giveEntityStreamPriv().forEach(e -> e.performAction());
 	}
 
+	
 	/**
 	 * LEGIT
 	 * 

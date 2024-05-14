@@ -148,16 +148,37 @@ class PreyTest {
 	void performActionIfAliveTest()
     {
 		Point shelterPosition = new Point(5, 5);
-		Point preyPosition = new Point(0, 0);
+		Point preyPosition = new Point(1, 1);
 		Shelter s = world10.createShelter(shelterPosition, Orientation.north());
-	 	Chromosome c= Chromosome.createRandom();
-        Prey p =world10.createPrey(s, c, preyPosition,Orientation.north());
+		
+		int[] weights = {331,-193,449,841,-78,-873,106,-970,906,458,417,-673};
+        
+		Chromosome c= new Chromosome(weights);
+		
+		 Prey p =world10.createPrey(s, c, preyPosition,Orientation.north());
+         p.performAction();
+	         
+		// p.performAction();
 
-        p.performAction();
-    	fail("Neurondata eerst nodig vooraleer ik wil testen");
-    	// need a right chromosome first, todo 
-        assertEquals(p.getOrientation(),Orientation.north());
-        assertEquals(p.getPosition(),new Point(10,10));
+    	assertEquals(p.getOrientation(),Orientation.northEast());
+        assertEquals(p.getPosition(),new Point(2,0));
+		p.die();
+		/* use this code to find genes
+		Chromosome c= Chromosome.createRandom();
+        boolean cond=true;
+        while(cond) {
+        	c= Chromosome.createRandom();
+            Prey p =world10.createPrey(s, c, preyPosition,Orientation.north());
+            p.performAction();
+            
+            cond=!(p.getOrientation().equals(Orientation.northEast()) && p.getPosition().equals(new Point(2,0)));
+            p.die();
+        }
+        for (int i=0; i<Constants.CHROM_SIZE;i++) {
+        	System.out.print(c.getGene(i));
+        	System.out.print(",");
+        }*/
+
     }
 	
 	@Test 

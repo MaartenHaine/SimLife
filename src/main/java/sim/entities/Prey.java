@@ -221,7 +221,7 @@ public class Prey extends MortalEntity
      * @post no occurences of died entity in siblings 
      * | !old(siblings).stream().anyMatch(ent -> ent.equals(this))
      * @post no occurences of died entity in shelter inhabitants 
-     * | !old(shelter).inhabitants.stream().anyMatch(ent -> ent.equals(this))
+     * | old(shelter).isDead() ||!old(shelter).inhabitants.stream().anyMatch(ent -> ent.equals(this))
      * @post shelter reference is removed
      * | shelter == null
      * @post siblings list is cleared
@@ -257,11 +257,12 @@ public class Prey extends MortalEntity
 	    
 	    //remove this from the inhabitants list of the shelter
 	    
-	    shelter.inhabitants.remove(this);
-	    if(shelter.inhabitants.isEmpty()) {
-	    	shelter.die();
-	    	}
-	    
+	    if(shelter.isAlivePkg()) { // check if shelter was killed before prey, could happen in tests
+		    shelter.inhabitants.remove(this);
+		    if(shelter.inhabitants.isEmpty()) {
+		    	shelter.die();
+		    	}
+	    }
 	    //clear the siblings and shelter fields
 	    this.siblings.clear();
 	    shelter = null;
