@@ -96,13 +96,6 @@ public class Simulation
 	 * 
 	 * DOES NOT HAVE TO BE DOCUMENTED -> PRIVATE
 	 * 
-	 * @pre | chromosomes != null
-	 * @pre | chromosomes.size() == preyCount
-	 *
-	 * 
-	 * @post | result.getPreys().size() == shelterCount*inhabitantsPerShelter
-	 * @post | result.getHunters().size() == shelterCount*huntersPerShelter
-	 * @post | result != null
 	 */
 	private World createRandomWorldWith(ArrayList<Chromosome> chromosomes)
 	{
@@ -204,6 +197,7 @@ public class Simulation
 
 		if (parentGeneration.isEmpty()) {
 			parentGeneration = Chromosome.createRandom(preyCount);
+			res.addAll(parentGeneration);
 		}else {
 
 			for (int i = 0; i < preyCount; i++)
