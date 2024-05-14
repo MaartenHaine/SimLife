@@ -64,6 +64,7 @@ public class Chromosome
 	 * @post | result != null
 	 * @post | result.size() == count
 	 * @post | result.stream().allMatch(c -> c != null)
+	 * @post | result.stream().allMatch(c->IntStream.range(0,Constants.CHROM_SIZE).allMatch(i->c.getGene(i)>=Constants.GENE_MIN &&c.getGene(i)<=Constants.GENE_MAX))
 	 */
 
     public static ArrayList<Chromosome> createRandom(int count)
@@ -175,8 +176,6 @@ public class Chromosome
      * @pre | 0 <= index && index < Constants.CHROM_SIZE
      * @post | result == IntStream.range(0, Constants.CHROM_SIZE).allMatch(i -> implies(i != index, getGene(i) == other.getGene(i)))
      */
-
-
     public boolean onlyDiffersAt(Chromosome other, int index)
     {
     	return IntStream.range(0, Constants.CHROM_SIZE).allMatch(i -> implies(i != index, getGene(i) == other.getGene(i)));

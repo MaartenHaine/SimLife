@@ -120,8 +120,17 @@ public class Hunter extends Entity
 		super(world, position, orientation, Constants.HUNTER_MOVE_PROBABILITY);
 		
 		//---- NIEUW ----
-		if(shelter==null) {throw new IllegalArgumentException();}
-		if(appetite <= 0) {throw new IllegalArgumentException();}
+		if(shelter==null || shelter.isDead()) {
+			world.removeEntityAt(position); // IF SHELTER IS NULL OR DEAD WE HAVE TO REMOVE THE ENTITY IN THE WORLD WHICH WE CREATED IN ENTITY CONSTUCTOR
+            
+			throw new IllegalArgumentException();
+			
+			}
+		if(appetite <= 0) {
+			world.removeEntityAt(position); // IF APPETITE INVALID WE HAVE TO REMOVE THE ENTITY IN THE WORLD WHICH WE CREATED IN ENTITY CONSTUCTOR
+            
+			throw new IllegalArgumentException();
+			}
 		//----       ----
 		this.shelter = shelter;
 		this.appetite = appetite;

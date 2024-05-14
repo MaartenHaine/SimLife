@@ -32,7 +32,6 @@ public abstract class ActivationFunctionNeuron implements Neuron
      * @post | result != null
      * @post | result.stream().allMatch(p -> p != null)
      */
-
     public ArrayList<Pair<Neuron, Integer>> getDependencies() {
     	ArrayList<Pair<Neuron, Integer>> res = new ArrayList<Pair<Neuron, Integer>>();
     	for (Pair<Neuron, Integer> p : dependencies) {
@@ -65,6 +64,9 @@ public abstract class ActivationFunctionNeuron implements Neuron
 
     /**
      * Initializes with getBias = 0 and getDependencies is empty
+     * 
+     * @post | getDependencies().size() ==0
+     * @post | getBias() ==0
      */
     public ActivationFunctionNeuron()
     {
@@ -95,6 +97,10 @@ public abstract class ActivationFunctionNeuron implements Neuron
     	}
     }
 
+    /**
+     * @mutates | this.getBias()
+     * @post  | bias == getBias()
+     */
     public void setBias(int bias)
     {
         this.bias = bias;

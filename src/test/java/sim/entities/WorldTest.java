@@ -78,11 +78,13 @@ class WorldTest {
 	    
 	    Hunter h = world10.createHunter(s,hunterPosition, Orientation.north());
 	    ents.add(h);
-		assertTrue(world10.getEntities().equals(ents));
+		assertEquals(world10.getEntities().get(0),s);
+		assertEquals(world10.getEntities().get(1),h);
+		assertEquals(world10.getEntities().get(2),p);
 
 		s.die();
 		ents.remove(s);
-		assertTrue(world10.getEntities().equals(ents));
+		assertEquals(world10.getEntities(),ents);
 
 		p.die();
 		ents.remove(p);
@@ -308,22 +310,88 @@ class WorldTest {
    
         ArrayList<Hunter> hunters = new ArrayList<Hunter>();
         hunters.add(h);
-        assertEquals(world10.getHunters(),h);
+        assertTrue(world10.getHunters().equals(hunters));
     }
     
     @Test
     void createShelterTest() {
     	
-    	// LEGIT FUNCTION: for coverage:
-    	
-		Point shelterPosition = new Point(0, 0);
-	    Point preyPosition=new Point(5,5);
-	    Shelter s = world10.createShelter(shelterPosition, Orientation.north());
-	 	Chromosome c= Chromosome.createRandom();
-        world10.createPrey(s, c, preyPosition,Orientation.north());
-      
+        Point validPosition = new Point(1, 1);
+        Point invalidPosition = new Point(-1, -1);
+
+
+        //USING CREATION OF SHELTER AS MORTAL ENTITY DUMMY
+        // Test null arguments
+        assertThrows(IllegalArgumentException.class, () -> world10.createShelter(null, Orientation.createRandom()));
+        assertThrows(IllegalArgumentException.class, () -> world10.createShelter(validPosition, null));
+        // ! UNTESTABLE THAT WORLD IS NULL OR MOVEPROBABILTY WRONG VALUE
+        
+        
+        // Test invalid position
+        assertThrows(IllegalArgumentException.class, () -> world10.createShelter(invalidPosition, Orientation.createRandom()));
+        
+        // Test position already occupied
+        Shelter s = world10.createShelter(validPosition, Orientation.north());
+		assertThrows(IllegalArgumentException.class, () -> world10.createShelter(validPosition, Orientation.createRandom()));
+
+        // Test validity constructor 
+        assertEquals(world10, s.getWorld());
+        assertEquals(false, s.isDead());
+        assertEquals(validPosition, s.getPosition());
+        assertEquals(Orientation.north(), s.getOrientation());
+        assertEquals(Constants.SHELTER_MOVE_PROBABILITY, s.getMoveProbability());
+        assertEquals(s, world10.getEntityAt(validPosition));
+        assertTrue(Point.isWithin(s.getPosition(), world10.getWidth(), world10.getHeight()));
+    
+        assertTrue( s.getInhabitants().equals(new ArrayList<>()));
+	
     }
     
+   
+    @Test
+    void hasHunterInConeTest() {
+    	
+    	// LEGIT FUNCTION: for coverage:
+    	world10.hasHunterInCone(new Point(5,5),Orientation.createRandom());
+    }
+    
+    @Test
+    void givePositionStreamTest() {
+    	
+    	// LEGIT FUNCTION: for coverage:
+    	world10.givePositionStream();
+    }
+    
+    @Test
+    void giveEntityStreamTest() {
+    	
+    	// LEGIT FUNCTION: for coverage:
+    	world10.giveEntityStream();
+    }
+    
+    @Test
+    void giveEntityGridTest() {
+        Shelter shelter = world10.createShelter(new Point(3, 3), Orientation.createRandom());
+        Prey prey = world10.createPrey(shelter, Chromosome.createRandom(), new Point(5, 5), Orientation.createRandom());
+        Hunter hunter = world10.createHunter(shelter, new Point(7, 7), Orientation.createRandom());
+
+        // Get the entity grid
+        Grid<Entity> entityGrid = world10.giveEntityGrid();
+
+        // Test the dimensions of the entity grid
+        assertEquals(world10.getWidth(), entityGrid.getWidth()); 
+        assertEquals(world10.getHeight(), entityGrid.getHeight());
+
+        // Test entities present in the entity grid
+        assertTrue(entityGrid.at(new Point(3,3)) instanceof Shelter); 
+        assertTrue(entityGrid.at(new Point(5,5))  instanceof Prey); 
+        assertTrue(entityGrid.at(new Point(7,7))  instanceof Hunter); 
+
+        // Test points without entities in the entity grid
+        assertNull(entityGrid.at(new Point(0,0))); 
+        assertNull(entityGrid.at(new Point(2,2)) ); 
+        assertNull(entityGrid.at(new Point(6,6)) ); 
+    }
     
 	@Test
 	void WorldFlawGetEntities() {

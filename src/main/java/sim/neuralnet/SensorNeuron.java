@@ -7,6 +7,10 @@ import sim.entities.Prey;
  */
 public abstract class SensorNeuron implements Neuron {
 
+	/**
+	 * @pre | prey != null
+	 * @inspects | prey
+	 */
 	@Override
 	public abstract int computeOutput(Prey prey);
 }

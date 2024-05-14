@@ -101,6 +101,7 @@ public abstract class Entity
 			}
 		*/
 		this.world = world;
+		world.entityGrid.setAt(position,this);// This way invariants hold
 		// DIT WORDT GEDAAN DOOR CREATE CREATURE ENZ this.world.entityGrid.setAt(position,this);
 		
     	this.position = position;
@@ -284,7 +285,7 @@ public abstract class Entity
      */
     public boolean isHunter()
     {
-        return isHunterPkg();
+    	  return isHunterPkg();
     }
     
     /**

@@ -23,6 +23,17 @@ public class Simulation
 	
 	/**
 	 * not a representation object for performance
+	 * 
+	 * not a representation object for performance
+	 * @invar| worldSize>0
+	 * @invar| preyCount>=0
+	 * @invar| huntersPerShelter>=0
+	 * @invar| shelterCount>=0
+	 * @invar| world != null
+	 * @invar| inhabitantsPerShelter>=0
+	 * @invar| preyCount == inhabitantsPerShelter*shelterCount
+	 * @invar er kunnen niet meer entities zijn dan plaats in de wereld
+	 * | preyCount+huntersPerShelter*shelterCount<=worldSize*worldSize
 	 */
 	private World world;
 
@@ -38,24 +49,26 @@ public class Simulation
     
     
     /**
-	 * Initializes a new simulation with the given parameters.
-	 * 
-	 * @param worldSize The size of the world
-	 * @param shelterCount The number of shelters
-	 * @param inhabitantsPerShelter The number of preys per shelter
-	 * @param huntersPerShelter The number of hunters per shelter
-	 * 
-	 * @pre | worldSize > 0
-	 * @pre | shelterCount > 0
-	 * @pre | inhabitantsPerShelter > 0
-	 * @pre | huntersPerShelter > 0
-	 * 
-	 * @post | getWorld() != null
-	 */
-
+     * @throws IllegalArgumentException| worldSize<=0 || shelterCount<=0 || inhabitantsPerShelter<0 || huntersPerShelter<0
+     * @throws IllegalArgumentException| worldSize*worldSize < shelterCount+shelterCount*inhabitantsPerShelter+shelterCount*huntersPerShelter
+     * @post | getWorld().getHeight() == worldSize
+     * @post | getWorld().getWidth() == worldSize
+     * @post | getWorld().getEntities().size() - getWorld().getHunters().size() - getWorld().getPreys().size() == shelterCount
+     * @post | getWorld().getHunters().size()/(getWorld().getEntities().size() - getWorld().getHunters().size() 
+     * 		 | - getWorld().getPreys().size()) == huntersPerShelter
+     * @post | getWorld().getPreys().size()/(getWorld().getEntities().size() - getWorld().getHunters().size() 
+     * 		 | - getWorld().getPreys().size()) == inhabitantsPerShelter
+     * @post | getWorld().getEntities().size() == shelterCount * (inhabitantsPerShelter + huntersPerShelter + 1)
+     */
     public Simulation(int worldSize, int shelterCount, int inhabitantsPerShelter, int huntersPerShelter)
     {
     	if (shelterCount < 0 || worldSize < 0 || huntersPerShelter < 0 || inhabitantsPerShelter < 0) { throw new IllegalArgumentException(); }
+    	
+    	// world size is bigger than amount of creatures in it
+    	if (worldSize*worldSize < shelterCount+shelterCount*inhabitantsPerShelter+shelterCount*huntersPerShelter) {
+    		throw new IllegalArgumentException();
+    	}
+    	
     	this.worldSize = worldSize;
     	this.shelterCount = shelterCount;
     	this.preyCount = shelterCount*inhabitantsPerShelter;
@@ -80,8 +93,12 @@ public class Simulation
 	 * For each shelter, inhabitantsPerShelter preys are added to the world, again with random positions and orientations.
 	 * Each prey is given one of the offspring chromosomes (each offspring chromosome is given to exactly one prey).
 	 * For each shelter, huntersPerShelter hunters are added to the world, with a random position and orientation.
+	 * 
+	 * DOES NOT HAVE TO BE DOCUMENTED -> PRIVATE
+	 * 
 	 * @pre | chromosomes != null
 	 * @pre | chromosomes.size() == preyCount
+	 *
 	 * 
 	 * @post | result.getPreys().size() == shelterCount*inhabitantsPerShelter
 	 * @post | result.getHunters().size() == shelterCount*huntersPerShelter
@@ -95,76 +112,29 @@ public class Simulation
 		
 		
 		RandomUtil.shuffle(positions);
-		//System.out.println(positions.size());	
-		
+	
 		for (int i = 0; i < shelterCount; i++)
 		{
 			Shelter shelter = world.createShelter(positions.get(i), Orientation.createRandom());
 			
-			//System.out.println(i);		
-			
+		
 			for(int j=0; j<inhabitantsPerShelter;j++) {
-				/*
-				Point inhab_pos = positions.get(RandomUtil.integer(positions.size()));
-				
-				while(!world.isFree(inhab_pos)) {
-					inhab_pos = positions.get(RandomUtil.integer(positions.size()));
-				}
-				*/
+	
 				world.createPrey(shelter, chromosomes.get(i*inhabitantsPerShelter+j), 
 						positions.get(shelterCount+j+i*inhabitantsPerShelter), 
 						Orientation.createRandom());
-						//System.out.println(shelterCount+j+i*inhabitantsPerShelter);
-				
+					
 			}
 			
 			for(int j=0; j<huntersPerShelter;j++) {
-				/*
-				Point hunter_pos = positions.get(RandomUtil.integer(positions.size()));
-				
-				while(!world.isFree(hunter_pos)) {
-					hunter_pos = positions.get(RandomUtil.integer(positions.size()));
-				}*/
+		
 				world.createHunter(shelter, 
 						positions.get(shelterCount+shelterCount*inhabitantsPerShelter+j+i*huntersPerShelter),
 						Orientation.createRandom());
-						//System.out.println(shelterCount+shelterCount*inhabitantsPerShelter+j+i*inhabitantsPerShelter);		
 				
 			}
 			
 			
-			/*
-			boolean bool2 = true;
-			boolean bool1 = true;
-			for (int j = 0; j < inhabitantsPerShelter; j++)
-			{
-				
-				while(bool1) {
-					Point inhab_pos = positions.get(RandomUtil.integer(positions.size()));
-					if (world.isFree(inhab_pos))
-					{
-						var prey = world.createPrey(shelter, chromosomes.get(i*inhabitantsPerShelter+j), inhab_pos, Orientation.createRandom());
-						bool1 = false;
-					}
-
-				}
-				
-			}
-			for (int j = 0; j < huntersPerShelter; j++)
-			{
-				
-				while(bool2){
-					Point hunter_pos = positions.get(RandomUtil.integer(positions.size()));
-					if (world.isFree(hunter_pos))
-					{
-						var hunter = world.createHunter(shelter, hunter_pos, Orientation.createRandom());
-						bool2 = false;
-					}
-
-				}
-				
-			}
-			*/
 			
 		}
 		return world;
@@ -234,14 +204,15 @@ public class Simulation
 
 		if (parentGeneration.isEmpty()) {
 			parentGeneration = Chromosome.createRandom(preyCount);
-		}
+		}else {
 
-		for (int i = 0; i < preyCount; i++)
-		{
-			var parent1 = parentGeneration.get(RandomUtil.integer(parentGeneration.size()));
-			var parent2 = parentGeneration.get(RandomUtil.integer(parentGeneration.size()));
-			var offspring = computeOffspring(parent1, parent2);
-			res.add(offspring);
+			for (int i = 0; i < preyCount; i++)
+			{
+				Chromosome parent1 = parentGeneration.get(RandomUtil.integer(parentGeneration.size()));
+				Chromosome parent2 = parentGeneration.get(RandomUtil.integer(parentGeneration.size()));
+				Chromosome offspring = computeOffspring(parent1, parent2);
+				res.add(offspring);
+			}
 		}
     	//can use method below
     	return res;

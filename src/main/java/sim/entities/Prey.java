@@ -75,9 +75,9 @@ public class Prey extends MortalEntity
 		 */
 		int valTurn = neuralNetwork.getTurnNeuron().computeOutput(this);
 		if(valTurn<-333) {
-			super.turnClockwise();
+			this.turnClockwise();
 		}else if(valTurn>333){
-			super.turnCounterclockwise();		
+			this.turnCounterclockwise();		
 		}
 	}
 
@@ -161,6 +161,7 @@ public class Prey extends MortalEntity
         if ( chromosome == null || world == null || shelter == null || position == null
         		|| orientation == null || shelter.isDead()) // ADDED SHELTER IS DEAD
         {
+        	world.removeEntityAt(position); // IF SHELTER IS NULL OR DEAD WE HAVE TO REMOVE THE ENTITY IN THE WORLD WHICH WE CREATED IN ENTITY CONSTUCTOR
             throw new IllegalArgumentException();
         }
         
@@ -182,14 +183,7 @@ public class Prey extends MortalEntity
         for (Prey sib : siblings) {
         	sib.siblings.add(this);
         }
-        /*
-        int range = siblings.size();
-        ArrayList<Prey> clone = new ArrayList<Prey>(siblings);
-	    for(int i=0; i< range;i++) {
-	    	Prey sib = clone.get(i);
-	    	sib.siblings.add(this);
-	    }
-        */
+
         shelter.inhabitants.add(this);
     }
 	/**
@@ -244,16 +238,7 @@ public class Prey extends MortalEntity
 	    for (Prey sib : siblings) {
         	sib.siblings.remove(this);
         	}
-	    
-	    /*int range = siblings.size();
-	    
-	    
-	    ArrayList<Prey> clone = new ArrayList<Prey>(siblings);
-	    for(int i=0; i< range;i++) {
-	    	Prey sib = clone.get(i);
-	    	sib.siblings.remove(this);
-	    }*/
-	    
+  
 	    
 	    //remove this from the inhabitants list of the shelter
 	    

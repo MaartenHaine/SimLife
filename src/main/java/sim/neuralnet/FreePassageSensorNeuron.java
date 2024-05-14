@@ -8,8 +8,15 @@ import util.Orientation;
  */
 public class FreePassageSensorNeuron extends BinarySensorNeuron
 {
+	/**
+	 * @invar | orientation != null
+	 */
     private final Orientation orientation;
 
+    /**
+     * @throws IllegalArgumentException | orientation ==null
+     * @post | getOrientation() == orientation
+     */
     public FreePassageSensorNeuron(Orientation orientation)
     {
     	if (orientation == null) { throw new IllegalArgumentException(); }
@@ -29,4 +36,13 @@ public class FreePassageSensorNeuron extends BinarySensorNeuron
 
         return world.isFree(targetPosition);
     }
+    
+    /**
+     * 
+     * @post | result !=null
+     */
+    public Orientation getOrientation() {
+    	return orientation;
+    }
+    
 }

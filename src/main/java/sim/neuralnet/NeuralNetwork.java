@@ -56,7 +56,6 @@ public class NeuralNetwork
      * @post | Arrays.stream(result).allMatch(n -> n != null)
      * @post | result.length == 5
      */
-
 	public SensorNeuron[] getInputNeurons()
     {
 		return Arrays.copyOf(this.inputLayerNeurons, this.inputLayerNeurons.length);
@@ -73,7 +72,7 @@ public class NeuralNetwork
 
     public ActivationFunctionNeuron[] getOutputNeurons()
     {
-        return new ActivationFunctionNeuron[] { getMoveForwardNeuron(), getTurnNeuron() };
+        return new ActivationFunctionNeuron[] { this.moveForwardNeuron, this.turnNeuron };
     }
 
     /**
