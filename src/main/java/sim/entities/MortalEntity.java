@@ -45,7 +45,7 @@ public abstract class MortalEntity extends Entity
 	 * @post | getPosition().equals(position)
 	 * @post | getOrientation().equals(orientation)
 	 * @post | getMoveProbability()==moveProbability
-	 * post | this.world.entityGrid.at(position).equals(this)
+	 * @post | this.world.entityGrid.at(position).equals(this)
 	 * @post | Point.isWithin(getPosition(),this.world.getWidth(),this.world.getHeight())	
 	 * 
 	 * nieuw

@@ -77,18 +77,14 @@ class WorldTest {
 	    assertTrue(world10.getEntities().equals(ents));
 	    
 	    Hunter h = world10.createHunter(s,hunterPosition, Orientation.north());
-	    ents.add(h);
+
 		assertEquals(world10.getEntities().get(0),s);
 		assertEquals(world10.getEntities().get(1),h);
 		assertEquals(world10.getEntities().get(2),p);
 
-		s.die();
-		ents.remove(s);
-		assertEquals(world10.getEntities(),ents);
+		p.die(); // shelter and prey die bc this is only inhab of sh
 
-		p.die();
-		ents.remove(p);
-		assertTrue(world10.getEntities().equals(ents));
+		assertEquals(world10.getEntities().get(0),h);
 
 		
 	}

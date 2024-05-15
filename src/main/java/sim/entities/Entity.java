@@ -49,7 +49,7 @@ public abstract class Entity
 
     /**
      *  
-     * invar if an entity is in a world, the world contains that entity 
+     * @invar if an entity is in a world, the world contains that entity 
      * | world == null || 
      * | world.entityGrid.givePositionStream().map(pos -> world.entityGrid.at(pos)).anyMatch(ent -> ent ==this)
 	 * @peerObject
@@ -72,7 +72,7 @@ public abstract class Entity
 	 * @post | getPosition().equals(position)
 	 * @post | getOrientation().equals(orientation)
 	 * @post | getMoveProbability()==moveProbability
-	 * post | this.world.entityGrid.at(position).equals(this)
+	 * @post | this.world.entityGrid.at(position).equals(this)
 	 * @post | Point.isWithin(getPosition(),this.world.getWidth(),this.world.getHeight())
 	 */
 	Entity(World world, Point position, Orientation orientation, int moveProbability)

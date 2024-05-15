@@ -56,7 +56,7 @@ public class Shelter extends MortalEntity
 	 * @post | getOrientation().equals(orientation)
 	 * @post | getMoveProbability()==Constants.SHELTER_MOVE_PROBABILITY
 	 * 
-	 * post | this.world.entityGrid.at(position).equals(this)
+	 * @post | this.world.entityGrid.at(position).equals(this)
 	 * @post | Point.isWithin(getPosition(),this.world.getWidth(),this.world.getHeight())	
 	 * 
 	 * 

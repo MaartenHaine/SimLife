@@ -148,7 +148,7 @@ public class Prey extends MortalEntity
 	 * @post | getPosition().equals(position)
 	 * @post | getOrientation().equals(orientation)
 	 * @post | getMoveProbability()==Constants.PREY_MOVE_PROBABILITY
-	 * post  this.world.entityGrid.at(position).equals(this)
+	 * @post  this.world.entityGrid.at(position).equals(this)
 	 * @post | Point.isWithin(getPosition(),this.world.getWidth(),this.world.getHeight())	
 	 * 
 	 * @post | isDead() == false
