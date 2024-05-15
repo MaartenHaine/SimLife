@@ -29,7 +29,7 @@ public abstract class Entity
 
 
 	/**
-	 * invar Entity positie komt overeen met hun positie in world
+	 * @invar Entity positie komt overeen met hun positie in world
 	 * | world == null || world.entityGrid.at(position)==this	
 	 * @invar | position !=null
 	 * @invar | world == null || world.entityGrid.isValidPosition(position)
@@ -73,6 +73,7 @@ public abstract class Entity
 	 * @post | getOrientation().equals(orientation)
 	 * @post | getMoveProbability()==moveProbability
 	 * @post | this.world.entityGrid.at(position).equals(this)
+	 * @post | this.world==world
 	 * @post | Point.isWithin(getPosition(),this.world.getWidth(),this.world.getHeight())
 	 */
 	Entity(World world, Point position, Orientation orientation, int moveProbability)
