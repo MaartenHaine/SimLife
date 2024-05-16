@@ -1,19 +1,12 @@
 package sim;
 
-import static util.Logic.*;
-
-
-import java.util.Arrays;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Random;
-import java.util.stream.IntStream;
-
 import sim.entities.World;
 import util.Orientation;
 import util.Point;
 import util.RandomUtil;
-import sim.Constants;
+
+import java.util.ArrayList;
+
 import sim.entities.Prey;
 import sim.entities.Shelter;
 

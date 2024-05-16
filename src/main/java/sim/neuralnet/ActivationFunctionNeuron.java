@@ -1,13 +1,12 @@
 package sim.neuralnet;
 
 import java.util.ArrayList;
-import java.util.Arrays;
+
 import java.util.stream.IntStream;
 import util.Pair;
 import static util.Logic.*;
 
 import sim.entities.Prey;
-import util.Pair;
 
 /**
  * @invar | getDependencies() != null

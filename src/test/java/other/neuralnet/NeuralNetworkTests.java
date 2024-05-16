@@ -8,7 +8,6 @@ import org.junit.jupiter.api.Test;
 
 import sim.Chromosome;
 import sim.neuralnet.*;
-import util.Pair;
 
 class NeuralNetworkTests {
 
@@ -43,8 +42,7 @@ class NeuralNetworkTests {
     public void testGetMoveForwardNeuron() {
         NeuralNetwork network = new NeuralNetwork();
         ActivationFunctionNeuron moveForwardNeuron = network.getMoveForwardNeuron();
-        SensorNeuron[] inputNeurons = network.getInputNeurons();
-        
+       
         assertTrue(moveForwardNeuron instanceof LinearFunctionNeuron);
         assertNotNull(moveForwardNeuron);
     }
@@ -53,8 +51,7 @@ class NeuralNetworkTests {
     public void testTurnNeuron() {
         NeuralNetwork network = new NeuralNetwork();
         ActivationFunctionNeuron turnNeutron = network.getTurnNeuron();
-        SensorNeuron[] inputNeurons = network.getInputNeurons();
-        
+       
         assertTrue(turnNeutron instanceof LinearFunctionNeuron);
         assertNotNull(turnNeutron);
     }

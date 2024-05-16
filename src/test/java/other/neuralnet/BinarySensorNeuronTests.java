@@ -28,6 +28,7 @@ class BinarySensorNeuronTests {
 		var chromosome = Chromosome.createRandom();
 		var prey = world.createPrey(shelter, chromosome, new Point(1, 1), Orientation.southEast());
 		var prey_free = world.createPrey(shelter, chromosome, new Point(15, 15), Orientation.south());
+		@SuppressWarnings("unused")
 		var hunter = world.createHunter(shelter, new Point(2, 2), Orientation.northWest());
 
 		//create a hunter sensor
@@ -63,6 +64,7 @@ class BinarySensorNeuronTests {
 		assertTrue(neuron.detect(prey));
 
 		//now create a prey so that the location is not free
+		@SuppressWarnings("unused")
 		var prey_block1 = world.createPrey(shelter, chromosome, new Point(1, 1), Orientation.north());
 		assertFalse(neuron.detect(prey));
 		
@@ -78,6 +80,7 @@ class BinarySensorNeuronTests {
 		var prey_free = world.createPrey(shelter, chromosome, new Point(15, 15), Orientation.south());
 
 		//first check if the hunter sensor works
+		@SuppressWarnings("unused")
 		var hunter = world.createHunter(shelter, new Point(1, 1), Orientation.createRandom());
 
 		BinarySensorNeuron hunterSensor = new HunterSensor();

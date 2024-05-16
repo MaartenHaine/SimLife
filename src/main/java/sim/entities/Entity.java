@@ -5,7 +5,7 @@ import util.Logic;
 import util.Orientation;
 import util.Point;
 import util.RandomUtil;
-import static util.Logic.*
+
 ;
 
 /**

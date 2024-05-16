@@ -9,7 +9,6 @@ import util.Color;
 import util.Logic;
 import util.Orientation;
 import util.Point;
-import static util.Logic.*;
 
 /**
  * @invar | getChromosome() !=null

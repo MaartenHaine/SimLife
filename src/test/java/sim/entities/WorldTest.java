@@ -129,7 +129,8 @@ class WorldTest {
 	   
 
 	    Chromosome c= Chromosome.createRandom();
-        Prey p =world10.createPrey(s, c, preyPosition,Orientation.north());
+	    
+        world10.createPrey(s, c, preyPosition,Orientation.north());
     	assertTrue(world10.getHunters().isEmpty());
     	
 	    Hunter h = world10.createHunter(s,hunterPosition, Orientation.north());
@@ -163,8 +164,7 @@ class WorldTest {
 
     	assertTrue(world10.numberOfEntities()==2);
 
-		
-	    Hunter h = world10.createHunter(s,hunterPosition, Orientation.north());
+		world10.createHunter(s,hunterPosition, Orientation.north());
 
 		assertTrue(world10.numberOfEntities()==3);
 
@@ -379,9 +379,9 @@ class WorldTest {
         assertEquals(world10.getHeight(), entityGrid.getHeight());
 
         // Test entities present in the entity grid
-        assertTrue(entityGrid.at(new Point(3,3)) instanceof Shelter); 
-        assertTrue(entityGrid.at(new Point(5,5))  instanceof Prey); 
-        assertTrue(entityGrid.at(new Point(7,7))  instanceof Hunter); 
+        assertTrue(entityGrid.at(new Point(3,3))== shelter); 
+        assertTrue(entityGrid.at(new Point(5,5)) == prey); 
+        assertTrue(entityGrid.at(new Point(7,7)) == hunter); 
 
         // Test points without entities in the entity grid
         assertNull(entityGrid.at(new Point(0,0))); 

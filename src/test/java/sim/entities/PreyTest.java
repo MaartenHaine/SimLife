@@ -2,8 +2,6 @@ package sim.entities;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-import java.util.ArrayList;
-
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -195,9 +193,7 @@ class PreyTest {
 
 		
 		Shelter s = world10.createShelter(shelterPosition, Orientation.north());
-	 	
-		Shelter s2 = world10.createShelter(otherShelterPosition, Orientation.north());
-	 	
+	 	 	
 		Chromosome c= Chromosome.createRandom();
 		Chromosome c2;
 		
@@ -217,7 +213,8 @@ class PreyTest {
         p2.die();
         
         Shelter s_otherWorld = otherWorld.createShelter(shelterPosition, Orientation.north());
-	 	Prey pThatKeepsShelterAlive = otherWorld.createPrey(s_otherWorld, c,posOfCreatureThatStaysAlive ,Orientation.east());
+	 	@SuppressWarnings("unused")
+		Prey pThatKeepsShelterAlive = otherWorld.createPrey(s_otherWorld, c,posOfCreatureThatStaysAlive ,Orientation.east());
         
         
         

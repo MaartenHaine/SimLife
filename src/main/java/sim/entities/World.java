@@ -10,8 +10,7 @@ import util.Grid;
 import util.Logic;
 import util.Orientation;
 import util.Point;
-import static util.Logic.*
-;
+
 
 /**
  * @invar alle bestaande entities in de grid zitten in de wereld 

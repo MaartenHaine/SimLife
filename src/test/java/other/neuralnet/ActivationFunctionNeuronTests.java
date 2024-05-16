@@ -7,7 +7,6 @@ import java.util.ArrayList;
 import org.junit.jupiter.api.Test;
 
 import sim.Chromosome;
-import sim.entities.Prey;
 import sim.entities.World;
 import sim.neuralnet.ActivationFunctionNeuron;
 import sim.neuralnet.FreePassageSensorNeuron;

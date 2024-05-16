@@ -91,7 +91,8 @@ class HunterTest {
 	        
 	        // TEST THAT HUNTER CAN MAXIMALLY EAT APPETITE AMOUNT OF PREY
 			
-	        Prey p_that_has_to_stay_alive_to_keep_the_shelter_alive = world10.createPrey(s,Chromosome.createRandom(),safePosition,Orientation.north());
+	        @SuppressWarnings("unused")
+			Prey p_that_has_to_stay_alive_to_keep_the_shelter_alive = world10.createPrey(s,Chromosome.createRandom(),safePosition,Orientation.north());
 			
 			
 			for(int i=0; i<Constants.HUNTER_INITIAL_APPETITE;i++) {
