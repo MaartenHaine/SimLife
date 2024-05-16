@@ -9,6 +9,11 @@ import static util.Logic.*;
 import sim.entities.Prey;
 import util.Pair;
 
+/**
+ * @invar | getDependencies() != null
+ * @invar | getDependencies().stream().allMatch(p -> p != null)
+ * @invar | getDependencies().size() <= 5
+ */
 
 public abstract class ActivationFunctionNeuron implements Neuron
 {
@@ -50,7 +55,12 @@ public abstract class ActivationFunctionNeuron implements Neuron
      * @pre | deps != null
      * @pre | deps.stream().allMatch(p -> p != null)
      * @pre | deps.size() <= 5
-     * @post | getDependencies().size() == deps.size()
+     * @post | getDependencies().size() == deps.size() 
+     * @post | deps.size() == getDependencies().size() &&  
+     * | IntStream.range(0, deps.size()).allMatch(i -> 
+	 * | deps.get(i).getFirst().equals(getDependencies().get(i).getFirst()) &&
+	 * |  deps.get(i).getSecond().equals(getDependencies().get(i).getSecond()))
+	 * 
      * @mutates_properties | getDependencies()
      */
 

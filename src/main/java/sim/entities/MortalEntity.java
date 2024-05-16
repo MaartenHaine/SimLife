@@ -26,7 +26,8 @@ public abstract class MortalEntity extends Entity
 {
 	/**
 	 * @invar | Logic.implies(dead,world==null)
-	 * invar | Logic.implies(!dead,world!=null && world.entityGrid.at(getPosition())==(this))
+	 * 
+	 * @invar | Logic.implies(!dead, world!=null && world.entityGrid.at(getPosition())==(this))
 	 */
     private boolean dead;
     
@@ -38,11 +39,10 @@ public abstract class MortalEntity extends Entity
 	 * @throws IllegalArgumentException | !world.entityGrid.isValidPosition(position)
 	 * @throws IllegalArgumentException | world.entityGrid.at(position)!=null
 	 *
-	 * mutates_properties | this.getWorld()
+	 * @mutates adds entity to the world  | world
 	 * also mutates world.giveEntityGrid() (this is a very slow operation and thus not documentated in a mutates)
 	 *  
-	 * @post | Logic.implies(old(world).entityGrid.at(position)==null, world == this.world)
-	 * @post | getPosition().equals(position)
+	 *  @post | getPosition().equals(position)
 	 * @post | getOrientation().equals(orientation)
 	 * @post | getMoveProbability()==moveProbability
 	 * @post | this.world.entityGrid.at(position).equals(this)
@@ -104,6 +104,7 @@ public abstract class MortalEntity extends Entity
     
     /**
      * 
+     * @mutates | this
      * v entity: 
      * @post | old(getWorld()).equals(getWorld())
 	 * @post | getMoveProbability()==old(getMoveProbability())

@@ -13,21 +13,24 @@ import util.RandomUtil;
  * Hunters are shown as red pixels
  * 
  * @invar | getColor().equals(Color.RED)
+ * @invar | getWorld().getHunters().contains(this)
+ * @invar hunter cant die so world cant be null | getWorld() != null
  * 
- * ENTITY INVARS
+ * ENTITY INVARS (changed that world cant be null)
  * @invar | getPosition()!=null
  * @invar | getOrientation() != null
  * @invar | 0 <=getMoveProbability() && getMoveProbability()  <= 100
  * @invar if an entity is in a world, the world contains that entity  
- * | getWorld() ==null ||  getWorld().getEntities().contains(this)
+ * |  getWorld().getEntities().contains(this)
  * @invar Entity positie komt overeen met hun positie in world
- * | getWorld() == null || getWorld().getEntityAt(getPosition()).equals(this)
- * @invar | getWorld() == null || Point.isWithin(getPosition(),getWorld().getWidth(),getWorld().getHeight())
+ * | getWorld().getEntityAt(getPosition()).equals(this)
+ * @invar | Point.isWithin(getPosition(),getWorld().getWidth(),getWorld().getHeight())
  * @invar| getColor()!=null
  * 
  */
 public class Hunter extends Entity
 {
+	
 	/**
 	 * @invar | appetite>=0
 	 */
@@ -54,9 +57,12 @@ public class Hunter extends Entity
 	}
 
 	/**
+	 * @invar hunter cant die so world cant be null | getWorld() != null
+	 * @invar | world.hunters.contains(this)
 	 * @invar | shelter != null
 	 * SHELTER KAN NIET NAAR HUNTER WIJZEN?
 	 * @invar | shelter.world==null  || shelter.world.hunters.contains(this)
+	 * @invar | shelter.world==null  || shelter.world == this.world
 	 * @peerObject
 	 */
 	final Shelter shelter;
@@ -64,8 +70,8 @@ public class Hunter extends Entity
 	
 	
 	/**
-	 * @throws IllegalArgumentException | shelter == null
-	 * 
+	 * @throws IllegalArgumentException | shelter == null || shelter.isDead()
+	 * 	
 	 *  via super: (je moet deze ook hier vermelden zie modelopl it 2 
 	 *
 	 * @throws IllegalArgumentException | world==null
@@ -74,15 +80,15 @@ public class Hunter extends Entity
 	 * @throws IllegalArgumentException | !world.entityGrid.isValidPosition(position)
 	 * @throws IllegalArgumentException | world.entityGrid.at(position)!=null
 	 *
-	 * mutates_properties | this.getWorld(), world.giveEntityGrid()
-	 *
-	 * @post | Logic.implies(old(world).entityGrid.at(position)==null, world == this.world)
+	 * @mutates adds entity to the world| world
+	 * 
 	 * @post | getPosition().equals(position)
 	 * @post | getOrientation().equals(orientation)
 	 * @post | getMoveProbability()==Constants.HUNTER_MOVE_PROBABILITY
 	 * @post | this.world.entityGrid.at(position).equals(this)
+	 * @post | this.world == world
 	 * @post | Point.isWithin(getPosition(),this.world.getWidth(),this.world.getHeight())
-	* 
+	*
 	 * @post The hunter will have Constants.HUNTER_INITIAL_APPETITE appetite
 	 * 
 	 */
@@ -93,7 +99,7 @@ public class Hunter extends Entity
 	}
 
 	/**
-	 * @throws IllegalArgumentException | shelter == null
+	 * @throws IllegalArgumentException | shelter == null || shelter.isDead()
 	 * @throws IllegalArgumentException | appetite <= 0
 	 * 	
 	 *  via super: (je moet deze ook hier vermelden zie modelopl it 2 
@@ -104,15 +110,14 @@ public class Hunter extends Entity
 	 * @throws IllegalArgumentException | !world.entityGrid.isValidPosition(position)
 	 * @throws IllegalArgumentException | world.entityGrid.at(position)!=null
 	 *
-	 * mutates_properties | this.getWorld(), world.giveEntityGrid()
-	 *
-	 * @post | Logic.implies(old(world).entityGrid.at(position)==null, world == this.world)
+	 * @mutates adds entity to the world| world
+	 * 
 	 * @post | getPosition().equals(position)
 	 * @post | getOrientation().equals(orientation)
 	 * @post | getMoveProbability()==Constants.HUNTER_MOVE_PROBABILITY
 	 * @post | this.world.entityGrid.at(position).equals(this)
-	 * @post Point.isWithin(getPosition(),this.world.getWidth(),this.world.getHeight())
-	* 
+	 * @post | this.world == world
+	 * @post | Point.isWithin(getPosition(),this.world.getWidth(),this.world.getHeight())
 	 * @post The hunter will have an appetite as is given as argument
 	 */
 	Hunter(World world, Shelter shelter, Point position, Orientation orientation, int appetite)
@@ -175,6 +180,11 @@ public class Hunter extends Entity
 		return String.format("Hunter(position=%s)", this.getPosition());
 	}
     /**
+     * @mutates_properties | getOrientation(), getPosition()
+     * 
+     * @mutates_properties | this.getWorld().givePositionStream(), this.getPosition()
+  	 * also  this.getWorld().giveEntityGrid() but this is slow to call
+  	 * 
      * @post checks if the hunter should attempt to move and hunt prey randomly based on a getMoveProbability
      * and its current appetite level (should be higher than zero). If the conditions are met, the hunter searches for the closest prey
      * among the inhabitants of its shelter. If a prey is found, the hunter adjusts its orientation to face

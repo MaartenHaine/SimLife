@@ -50,7 +50,7 @@ public class World
 	 * @invar | hunters != null
 	 * @invar | hunters.stream().allMatch(hunt -> hunt ==null || this.entityGrid.givePositionStream().map(pos -> this.entityGrid.at(pos)).anyMatch(ent-> ent ==null || ent.equals(hunt.shelter)))
 	 * @invar Every hunter is in the entityGrid | hunters.stream().allMatch(h -> entityGrid.givePositionStream().map(pos -> entityGrid.at(pos)).anyMatch(e-> e==null || e.equals(h)))
-	 * 
+	 * @invar | hunters.stream().allMatch(h->h.world ==this)
 	 * @representationObject
 	 * @peerObjects
 	 */
@@ -91,13 +91,20 @@ public class World
 		
 	}
 
+	/**
+	 * 
+	 * @post | result>0
+	 */
 	public int getWidth()
 	{
 		//OLD return 0;
 		return entityGrid.getWidth();
 	}
 
-
+	/**
+	 * 
+	 * @post | result>0
+	 */
 	public int getHeight()
 	{
 		//OLD return 0;
@@ -107,12 +114,10 @@ public class World
 	/**
 	 * Returns all entities inhabiting the world.
 	 * 
-	 * !this copies every entity
 	 * @creates | result
-	 * @creates | result,... result
 	 * @post| result!=null
 	 * @post | result.stream().allMatch(ent1-> getEntityAt(ent1.getPosition()).equals(ent1))
-	 * @post 
+	 * @post | result.stream().allMatch(ent1-> ent1!=null)
 	 */
 	public List<Entity> getEntities()
 	{
@@ -221,10 +226,8 @@ public class World
 
 
 
-	
 	/**
-	 * @throws IllegalArgumentException | shelter == null
-	 * 
+	 * @throws IllegalArgumentException | shelter == null || shelter.isDead()
 	 *  via super: (je moet deze ook hier vermelden zie modelopl it 2 
 	 *
 	 * @throws IllegalArgumentException | position == null
@@ -232,19 +235,18 @@ public class World
 	 * @throws IllegalArgumentException | !this.giveEntityGrid().isValidPosition(position)
 	 * @throws IllegalArgumentException | this.getEntityAt(position)!=null
 	 *
-	 * @creates | result
-	 * mutates_properties | this.giveEntityStream(), this.getHunters()
+	 *  mutates_properties | this.giveEntityStream(), this.getHunters()
 	 * This is also mutated but not included because its slow:  this.giveEntityGrid()
 	 *
-	 * @post | Logic.implies(old(this).getEntityAt(position)==null, this == result.getWorld())
+	 * @creates | result
+	 * 
+	 * @post | result.getPosition().equals(position)
 	 * @post | result.getPosition().equals(position)
 	 * @post | result.getOrientation().equals(orientation)
 	 * @post | result.getMoveProbability()==Constants.HUNTER_MOVE_PROBABILITY
 	 * @post | result.getWorld().giveEntityGrid().at(position).equals(result)
-	 * @post | Point.isWithin(result.getPosition(),getWidth(),getHeight())
-	* 
-	 * @post The hunter will have Constants.HUNTER_INITIAL_APPETITE appetite
-	 * 
+	 * @post | Point.isWithin(result.getPosition(),this.getWidth(),this.getHeight())
+	 * * @post The hunter will have Constants.HUNTER_INITIAL_APPETITE appetite
 	 */
 	public Hunter createHunter(Shelter shelter, Point position, Orientation orientation)
 	{
@@ -259,6 +261,8 @@ public class World
 		return hunter;
 	}
 
+
+	
 
     /**
      * via super: (je moet deze ook hier vermelden zie modelopl it 2 
@@ -336,10 +340,9 @@ public class World
 	 * 
 	 * @post | result.getWidth() == this.getWidth()
 	 * @post | result.getHeight() == this.getHeight()
+	 * @post | result != null
 	 * @post the result equals the grid that the world uses 
-	// * these give stackoverflow errors 
-	 // post  result.givePositionStream().allMatch(ent1->(givePositionStream().anyMatch(ent2-> ent1.equals(ent2))))
-	 // post  result.givePositionStream().map(pos -> result.at(pos)).filter(entity -> entity != null).allMatch(ent1->giveEntityStream().anyMatch(ent2-> ent1.equals(ent2)))
+	 * @post all entities are also brought into the grid| getEntities().stream().allMatch(ent-> result.at(ent.getPosition())==ent)
 	 */
 	public Grid<Entity> giveEntityGrid() {
 		// OLD

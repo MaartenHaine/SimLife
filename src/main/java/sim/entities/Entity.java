@@ -65,10 +65,9 @@ public abstract class Entity
 	 * @throws IllegalArgumentException | moveProbability < 0 || moveProbability> 100
 	 * @throws IllegalArgumentException | !world.entityGrid.isValidPosition(position)
 	 * @throws IllegalArgumentException | world.entityGrid.at(position)!=null
-	 * mutates_properties | this.getWorld()
-	 * also mutates world.giveEntityGrid() (this is a very slow operation and thus not documentated in a mutates)
-	 *  
-	 * @post | Logic.implies(old(world).entityGrid.at(position)==null, world == this.world)
+	 *
+	 * @mutates adds entity to the world | world
+	 * 
 	 * @post | getPosition().equals(position)
 	 * @post | getOrientation().equals(orientation)
 	 * @post | getMoveProbability()==moveProbability
@@ -127,7 +126,6 @@ public abstract class Entity
 	}
 
 	/**
-	 * MOET JE WORLD COPYEN?
      * Returns the world which this entity inhabits.
      * @peerObject
      */
@@ -173,16 +171,22 @@ public abstract class Entity
     /**
      * Changes the orientation of the entity.
      * @pre | orientation != null
-     * @mutates | getOrientation()
+     * @mutates_properties | getOrientation()
      * @post | getOrientation().equals(orientation)
+     * @post | old(getWorld()) == getWorld()
+	 * @post | old(getPosition()).equals(getPosition())
+	 * @post | old(getMoveProbability()) == getMoveProbability()
      */
     public void setOrientation(Orientation orientation) {
     	this.orientation = orientation;
     }
     
     /**
-     * @mutates | getOrientation()
+     * @mutates_properties | getOrientation()
      * @post | getOrientation().equals(old(getOrientation()).turnClockwise(1))
+     * @post | old(getWorld()) == getWorld()
+	 * @post | old(getPosition()).equals(getPosition())
+	 * @post | old(getMoveProbability()) == getMoveProbability()
      */
 	public void turnClockwise()
 	{
@@ -190,8 +194,11 @@ public abstract class Entity
 	}
 
 	/**
-	 * @mutates | getOrientation()
+	 * @mutates_properties | getOrientation()
      * @post | getOrientation().equals(old(getOrientation()).turnCounterclockwise(1))
+     * @post | old(getWorld()) == getWorld()
+	 * @post | old(getPosition()).equals(getPosition())
+	 * @post | old(getMoveProbability()) == getMoveProbability()
      */
 	public void turnCounterclockwise()
 	{
@@ -222,12 +229,16 @@ public abstract class Entity
      * mutates_properties  getWorld().giveEntityGrid()
      * 
      * 
-     * 
-     * @post | Logic.implies(getWorld().isFree(old(destination())),getPosition().equals(old(destination())))
-     * 
+     * @mutates_properties | this.getWorld().givePositionStream(), this.getPosition()
+  	 * also  this.getWorld().giveEntityGrid() but this is slow to call
      * @post | old(getWorld()) == getWorld()
 	 * @post | getOrientation().equals(old(getOrientation()))
 	 * @post | getMoveProbability()==old(getMoveProbability())
+	 * 
+	 * @post | Logic.implies(getWorld().isFree(old(destination())),getPosition().equals(old(destination())))
+     * 
+	 * @post | Logic.implies(old(getWorld().isFree(old(destination()))),getWorld().getEntityAt(old(getPosition())) == null)
+	 * @post | Logic.implies(!old(getWorld().isFree(old(destination()))),old(getPosition()).equals(getPosition()))
      */
     public void moveForward()
     {
@@ -248,8 +259,13 @@ public abstract class Entity
      * Samples using moveProbability and attempts to move if the latter result is true
      * See RandomUtil.unfairBool
      * 
-     * @post creature moves forward (one step forward in the direction of its orientation) with proba moveProbability and if destination() is free
+     * @mutates_properties | this.getWorld().givePositionStream(), this.getPosition()
+  	 * also  this.getWorld().giveEntityGrid() but this is slow
      * 
+     * @post creature moves forward (one step forward in the direction of its orientation) with proba moveProbability and if destination() is free
+     * then  Logic.implies(getWorld().isFree(old(destination())),getPosition().equals(old(destination())))
+     * and Logic.implies(old(getWorld().isFree(old(destination()))),getWorld().getEntityAt(old(getPosition())) == null)
+	 * and  Logic.implies(!old(getWorld().isFree(old(destination()))),old(getPosition()).equals(getPosition()))
      * @post | old(getWorld()) == getWorld()
 	 * @post | getOrientation().equals(old(getOrientation()))
 	 * @post | getMoveProbability()==old(getMoveProbability())
@@ -260,6 +276,7 @@ public abstract class Entity
     	if(RandomUtil.unfairBool(moveProbability)) {moveForward();}
     }
     /**
+     * @mutates | this
      * @post | old(getWorld()).equals(getWorld())
 	 * @post | getMoveProbability()==old(getMoveProbability())
      */

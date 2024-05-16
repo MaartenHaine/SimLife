@@ -22,8 +22,7 @@ public class Simulation
 	private final int inhabitantsPerShelter;
 	
 	/**
-	 * not a representation object for performance
-	 * 
+
 	 * not a representation object for performance
 	 * @invar| worldSize>0
 	 * @invar| preyCount>=0
@@ -33,7 +32,7 @@ public class Simulation
 	 * @invar| inhabitantsPerShelter>=0
 	 * @invar| preyCount == inhabitantsPerShelter*shelterCount
 	 * @invar er kunnen niet meer entities zijn dan plaats in de wereld
-	 * | preyCount+huntersPerShelter*shelterCount<=worldSize*worldSize
+	 * | preyCount+huntersPerShelter*shelterCount+shelterCount<=worldSize*worldSize
 	 */
 	private World world;
 
@@ -145,9 +144,14 @@ public class Simulation
     /**
      * Compute the list of surviving chromosomes, the list of offspring chromosomes,
      * and creates a new world based on that latter list.
-     * @inspects | getWorld()
+     * 
 	 * @creates | getWorld()
-	 * @mutates | this
+	 * @post | old(getWorld()).numberOfEntities()== getWorld().numberOfEntities()
+	 * @post | old(getWorld()).getPreys().size()== getWorld().getPreys().size()
+	 * @post | old(getWorld()).getHunters().size()== getWorld().getHunters().size()
+	 * @post | old(getWorld()).getWidth()  == getWorld().getWidth() 
+	 * @post | old(getWorld()).getHeight()  == getWorld().getHeight() 
+	 * 
      */
     public void nextGeneration()
     {

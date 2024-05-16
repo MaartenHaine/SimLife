@@ -19,20 +19,21 @@ import static util.Logic.*;
  * @invar every sibling in the siblings arrayList has this as sibling as well
  * 
  * @invar | getShelter() == null  || getShelter().getInhabitants().contains(this) 
+ * @invar | getShelter() == null || getShelter().getInhabitants().stream().allMatch(prey -> prey != null && getWorld().getPreys().contains(prey))
  * 
  *  MortalEntity invars
  * @invar | Logic.implies(isDead(),getWorld()==null)
- * invar | Logic.implies(!isDead(),getWorld() !=null && getWorld().getEntities().contains(this))
+ * @invar | Logic.implies(!isDead(),getWorld() !=null && getWorld().getEntities().contains(this))
  *  
  *  
  * ENTITY INVARS 
  * @invar | getPosition()!=null
  * @invar | getOrientation() != null
  * @invar | 0 <=getMoveProbability() && getMoveProbability()  <= 100
- * invar if an entity is in a world, the world contains that entity  
- *  getWorld() ==null ||  getWorld().getEntities().contains(this)
- * invar Entity positie komt overeen met hun positie in world
- *  getWorld() == null || getWorld().getEntityAt(this.getPosition()).equals(this)
+ * @invar if an entity is in a world, the world contains that entity  
+ * | getWorld() ==null ||  getWorld().getEntities().contains(this)
+ * @invar Entity positie komt overeen met hun positie in world
+ *  | getWorld() == null || getWorld().getEntityAt(this.getPosition()).equals(this)
  * @invar | getWorld() == null ||  Point.isWithin(getPosition(),getWorld().getWidth(),getWorld().getHeight())
  * @invar| getColor()!=null
  */
@@ -92,7 +93,7 @@ public class Prey extends MortalEntity
 	/**
 	 * @invar | siblings != null
 	 * @invar | siblings.stream().allMatch(ent-> ent==null || ent.siblings.contains(this))
-	 * 
+	 *  
 	 * @peerObjects
 	 * @representationObject
 	 */
@@ -100,6 +101,9 @@ public class Prey extends MortalEntity
 
     /**
      * @invar | shelter == null  || shelter.inhabitants.contains(this)
+     * @invar | shelter == null || shelter.inhabitants.stream().allMatch(prey -> prey != null && getWorld().getPreys().contains(prey))
+     * @invar | siblings.stream().allMatch(ent-> ent==null || ent.shelter==this.shelter)
+	 *
      * @peerObject
      */
     Shelter shelter;
@@ -119,7 +123,7 @@ public class Prey extends MortalEntity
 	 * @throws IllegalArgumentException | shelter.isDead()
 	 * 
 	 * 
-     * mutates_properties | shelter.getInhabitants(), this.getShelter()
+     * @mutates adds this creature to the inhabs of shelter | shelter
 	 * 
 	 * @post | getChromosome().equals(chromosome)
 	 * @post | getChromosome() != null
@@ -140,17 +144,15 @@ public class Prey extends MortalEntity
 	 * @throws IllegalArgumentException | !world.entityGrid.isValidPosition(position)
 	 * @throws IllegalArgumentException | world.entityGrid.at(position)!=null
 	 *
-	 * mutates_properties | this.getWorld()
-	 * also mutates world.giveEntityGrid() (this is a very slow operation and thus not documentated in a mutates)
-	 *  
-	 *  
-	 * @post | Logic.implies(old(world).entityGrid.at(position)==null, world == this.world)
+	 * @mutates adds entity to the world | world
+	 * 
 	 * @post | getPosition().equals(position)
 	 * @post | getOrientation().equals(orientation)
-	 * @post | getMoveProbability()==Constants.PREY_MOVE_PROBABILITY
-	 * @post  this.world.entityGrid.at(position).equals(this)
-	 * @post | Point.isWithin(getPosition(),this.world.getWidth(),this.world.getHeight())	
-	 * 
+	 * @post | this.world.entityGrid.at(position).equals(this)
+	 * @post | this.world==world
+	 * @post | Point.isWithin(getPosition(),this.world.getWidth(),this.world.getHeight())
+	 *
+	 *mortal entity post
 	 * @post | isDead() == false
 	 */
 	Prey(World world, Shelter shelter, Chromosome chromosome, Point position, Orientation orientation)
@@ -275,6 +277,8 @@ public class Prey extends MortalEntity
 
 
     /**
+     * @mutates | this
+     *  
      * @post if the turn neuron outputs a value higher that 333 the prey will turn counter clockwise, if it returns a value lower than -333 the prey will turn clockwise
      *  else it will not move
      * @post if the move forward neuron outputs a value strictly greater than zero, the prey will move forward in the direction of its orientation if possibke
@@ -319,8 +323,9 @@ public class Prey extends MortalEntity
     }
 
     /**
-     * 
+     * @pre | getShelter() != null
      * @post | result==getShelter().getPosition().distanceSquared(this.getPosition())
+     * @post | result >=0
      */
     public int distanceSquaredToShelter()
     {
