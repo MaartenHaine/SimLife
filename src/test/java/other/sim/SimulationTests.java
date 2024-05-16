@@ -14,6 +14,8 @@ class SimulationTests {
 		Simulation sim = new Simulation(Constants.WORLD_SIZE, Constants.SHELTER_COUNT, Constants.INHABITANTS_PER_SHELTER, Constants.HUNTERS_PER_SHELTER);
 		
 		assertNotNull(sim.getWorld());
+		
+		assertThrows(IllegalArgumentException.class, ()->new Simulation(10, 10,10, 10));
 	}
 
 	@Test

@@ -59,12 +59,14 @@ class BinarySensorNeuronTests {
 		var chromosome = Chromosome.createRandom();
 		var prey = world.createPrey(shelter, chromosome, new Point(1, 0), Orientation.south());
 		//create a free passage sensor
-		BinarySensorNeuron neuron = new FreePassageSensorNeuron(Orientation.north());
+		FreePassageSensorNeuron neuron = new FreePassageSensorNeuron(Orientation.north());
 		assertTrue(neuron.detect(prey));
 
 		//now create a prey so that the location is not free
 		var prey_block1 = world.createPrey(shelter, chromosome, new Point(1, 1), Orientation.north());
 		assertFalse(neuron.detect(prey));
+		
+		assertEquals(neuron.getOrientation(),Orientation.north());
 	}
 
 	@Test
