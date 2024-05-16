@@ -101,9 +101,9 @@ public class Prey extends MortalEntity
 
     /**
      * @invar | shelter == null  || shelter.inhabitants.contains(this)
-     * @invar | shelter == null || shelter.inhabitants.stream().allMatch(prey -> prey != null && getWorld().getPreys().contains(prey))
      * @invar | siblings.stream().allMatch(ent-> ent==null || ent.shelter==this.shelter)
-	 *
+	 * @invar | shelter == null || shelter.inhabitants.stream().allMatch(prey -> prey != null && getWorld().getPreys().contains(prey))
+     *
      * @peerObject
      */
     Shelter shelter;

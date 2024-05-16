@@ -15,6 +15,7 @@ public abstract class BinarySensorNeuron extends SensorNeuron
      * @pre | prey.getWorld() != null
      * 
      * @inspects | prey
+     * @inspects | prey.getWorld()
      * @post | Logic.implies(detect(prey) == true, result==750) 
      * @post | Logic.implies(detect(prey) == false,result== -750)
      */

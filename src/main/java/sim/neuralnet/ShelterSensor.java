@@ -10,11 +10,12 @@ public class ShelterSensor extends BinarySensorNeuron
 {
 	/**
 	 * @pre | prey != null
-	 * @pre | prey.getWorld() !=null
+	 * @pre | prey.getShelter() !=null
+	 * @pre zie super| prey.getWorld() !=null
 	 * @inspects | prey
-	 * @inspects | prey.getWorld()
+	 * @inspects | prey.getShelter()
 	 * @post check if orientation of the pray is the same as the shortest one to the shelter 
-	 * | prey.getOrientation().isEqual(prey.getPosition().vectorTo(prey.getShelter().getPosition()).toClosestOrientation()) 
+	 * | result == prey.getPosition().vectorTo(prey.getShelter().getPosition()).toClosestOrientation().isEqual(prey.getOrientation())
 	 */
 	@Override
 	public boolean detect(Prey prey)

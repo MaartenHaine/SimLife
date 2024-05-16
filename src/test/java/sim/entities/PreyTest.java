@@ -188,6 +188,8 @@ class PreyTest {
 		
 		Point shelterPosition = new Point(5, 5);
 		Point otherShelterPosition = new Point(6, 6);
+		
+		Point posOfCreatureThatStaysAlive = new Point(9,9);
 		Point prey1Position = new Point(0, 0);
 		Point prey2Position = new Point(1,1);
 
@@ -214,25 +216,33 @@ class PreyTest {
         assertFalse(p1.isEqual(p2));
         p2.die();
         
-        // orient diff (world doenst matter, otherwise illegal arg exc
-        Prey p3 =otherWorld.createPrey(s, c, prey1Position,Orientation.east());
+        Shelter s_otherWorld = otherWorld.createShelter(shelterPosition, Orientation.north());
+	 	Prey pThatKeepsShelterAlive = otherWorld.createPrey(s_otherWorld, c,posOfCreatureThatStaysAlive ,Orientation.east());
+        
+        
+        
+        // orient diff (world doenst matter, otherwise illegal arg exc, shelter has to be different as well because it has to live in otherWORLD
+        Prey p3 =otherWorld.createPrey(s_otherWorld, c, prey1Position,Orientation.east());
         
         assertFalse(p1.isEqual(p3));
         p3.die();
-        // shelter diff
-        Prey p4 =otherWorld.createPrey(s2, c, prey1Position,Orientation.north());
         
-        //WHY DOENST SHELTER MATTER
+        Shelter s_otherWorld2 = otherWorld.createShelter(otherShelterPosition, Orientation.north());
+	 	
+        // shelter diff
+        Prey p4 =otherWorld.createPrey(s_otherWorld2, c, prey1Position,Orientation.north());
+        
+        
         assertTrue(p1.isEqual(p4));
         p4.die();
         // chromo diff
-        Prey p5 =otherWorld.createPrey(s, c2, prey1Position,Orientation.north());
+        Prey p5 =otherWorld.createPrey(s_otherWorld, c2, prey1Position,Orientation.north());
         
         
         assertFalse(p1.isEqual(p5));
         p5.die();
         // SAME
-        Prey p6 =otherWorld.createPrey(s, c, prey1Position,Orientation.north());
+        Prey p6 =otherWorld.createPrey(s_otherWorld, c, prey1Position,Orientation.north());
         
 
         assertTrue(p1.isEqual(p6));

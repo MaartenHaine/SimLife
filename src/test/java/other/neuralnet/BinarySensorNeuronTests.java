@@ -22,13 +22,13 @@ class BinarySensorNeuronTests {
 
 	@Test
 	void testHunterSensor() {
-		//generate a prey and a hunter in the same position
+		//generate a prey and a hunter next to eachother
 		World world = new World(Constants.WORLD_SIZE, Constants.WORLD_SIZE);
 		var shelter = world.createShelter(new Point(0, 0), Orientation.createRandom());
 		var chromosome = Chromosome.createRandom();
-		var prey = world.createPrey(shelter, chromosome, new Point(1, 1), Orientation.createRandom());
+		var prey = world.createPrey(shelter, chromosome, new Point(1, 1), Orientation.southEast());
 		var prey_free = world.createPrey(shelter, chromosome, new Point(15, 15), Orientation.south());
-		var hunter = world.createHunter(shelter, new Point(1, 1), Orientation.createRandom());
+		var hunter = world.createHunter(shelter, new Point(2, 2), Orientation.northWest());
 
 		//create a hunter sensor
 		BinarySensorNeuron neuron = new HunterSensor();
@@ -70,7 +70,7 @@ class BinarySensorNeuronTests {
 	@Test
 	void testComputeOutput() {
 		World world = new World(Constants.WORLD_SIZE, Constants.WORLD_SIZE);
-		var shelter = world.createShelter(new Point(1, 1), Orientation.createRandom());
+		var shelter = world.createShelter(new Point(0, 1), Orientation.createRandom());
 		var chromosome = Chromosome.createRandom();
 		var prey = world.createPrey(shelter, chromosome, new Point(1, 0), Orientation.south());
 		var prey_free = world.createPrey(shelter, chromosome, new Point(15, 15), Orientation.south());
@@ -84,7 +84,7 @@ class BinarySensorNeuronTests {
 
 		//now check if the shelter sensor works
 		BinarySensorNeuron shelterSensor = new ShelterSensor();
-		assertEquals(shelterSensor.computeOutput(prey), 750);
+		assertEquals(shelterSensor.computeOutput(prey), -750);
 		assertEquals(shelterSensor.computeOutput(prey_free), -750);
 
 		//now check if the free passage sensor works
