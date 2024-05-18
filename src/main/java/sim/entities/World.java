@@ -86,6 +86,7 @@ public class World
 		*/
 		// The grid checks the width and height
 		this.entityGrid = new Grid<Entity>(width,height);
+		
 		this.hunters = new ArrayList<Hunter>();
 		
 	}

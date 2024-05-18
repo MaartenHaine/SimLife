@@ -2,6 +2,7 @@ package other;
 
 import static org.junit.jupiter.api.Assertions.*;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.stream.IntStream;
 
 
@@ -93,6 +94,21 @@ class FlawDetectingTests {
 	}
 	
 	@Test
+	void PreyConstructorFlaws() {
+		// FLAW THE CONSTRUCTOR DIDNT CHECK IF SHELTER WAS DEAD OR NOT
+		
+        Point validPosition1 = new Point(1, 1);
+        Point shelterPosition = new Point(5, 5);
+        Shelter sdead = world10.createShelter(shelterPosition, Orientation.north());
+        sdead.die();
+        assertThrows(IllegalArgumentException.class, () -> world10.createPrey(sdead, Chromosome.createRandom(), validPosition1,Orientation.createRandom()));
+
+        // FLAW : PREY DIDNT GET SIBLINGS AND SIBLINGS DIDNT GET PREY AS NEW SIBLING
+        // CANT BE TESTED THO DUE TO SIBLINGS BEING PKG PRIV
+        
+	}
+	
+	@Test
 	void ShelterFlaws() {
 		//FLAW REPRESENTATION EXPOSURE FOR getInHabitants
 		Shelter s = world10.createShelter(new Point(1,1), Orientation.createRandom());
@@ -102,6 +118,34 @@ class FlawDetectingTests {
 		assertTrue(s.getInhabitants().size()==1);
 		s.getInhabitants().add(p1);
 		assertTrue(s.getInhabitants().size()==1);
+		
+	}
+	
+	@Test
+	void IsShelterFlaw() {
+		// FLAW IS SHELTER PKG RETURNED FALSE
+		Point validPosition = new Point(1, 1);
+		Shelter s = world10.createShelter(validPosition,Orientation.createRandom());
+		
+		assertTrue(s.isShelter());
+		assertFalse(s.isHunter());
+		assertFalse(s.isPrey());
+		
+	}
+	
+	@Test
+	void WorldConstructorFlaw(){
+		// FLAW: NO DEFENSIVE CONSTRUCTOR
+		assertThrows(IllegalArgumentException.class, () -> new World(1,0));
+		assertThrows(IllegalArgumentException.class, () -> new World(0,1));
+		assertThrows(IllegalArgumentException.class, () -> new World(-1,1));
+		assertThrows(IllegalArgumentException.class, () -> new World(1,-1));
+	
+		// NO IMPL AS WELL
+		assertEquals(10,world10.getHeight());
+		assertEquals(10,world10.getWidth());
+		assertNotNull(world10.getHunters());
+		assertNotNull(world10.giveEntityGrid());
 		
 	}
 	
@@ -149,7 +193,21 @@ class FlawDetectingTests {
 		
 		assertTrue(newWorld.giveEntityGrid().at(punt)==null);
 	}
-	
+	@Test
+	void createEntitiesDefensiveFlaw() {
+		// FLAW: CHECK THROWS FOR ENTITIES
+		Shelter s = world10.createShelter(new Point(1,1), Orientation.createRandom());
+		
+		// 2 ents one position
+		assertThrows(IllegalArgumentException.class, () -> world10.createShelter(new Point(1,1), Orientation.createRandom()));
+		
+		//null arguments
+		assertThrows(IllegalArgumentException.class, () -> world10.createShelter(null, Orientation.createRandom()));
+		assertThrows(IllegalArgumentException.class, () -> world10.createHunter(null, new Point(2,2), Orientation.createRandom()));
+		assertThrows(IllegalArgumentException.class, () -> world10.createPrey(s, null, new Point(3,3), Orientation.createRandom()));
+		assertThrows(IllegalArgumentException.class, () -> world10.createShelter(new Point(4,4), null));
+		
+	}
 	// =================================
 	// 		END OF ENTITY FLAWS
 	// =================================
@@ -202,8 +260,45 @@ class FlawDetectingTests {
 		assertThrows(IllegalArgumentException.class, () ->new Simulation(-1, 1, -1, 1) );
 		assertThrows(IllegalArgumentException.class, () ->new Simulation(-1, 1, -1, -1) );
 		assertThrows(IllegalArgumentException.class, () ->new Simulation(-1, -1, -1, -1) );
+		
 		}
 	
+	
+	/**
+	 * FLAW IN NEXT GEN
+	 * createRandomWorldWith(new ArrayList<>(offspringChromosomes));
+    	instead of this.world = createRandomWorldWith(new ArrayList<>(offspringChromosomes));
+	 */
+	@Test
+	void nextGenerationFlaw() {
+		Simulation sim = new Simulation(Constants.WORLD_SIZE,1,5,1);
+		World world = sim.getWorld();
+		
+		
+		// kill everything
+		for(Entity e : world.getEntities()) {
+			if (e.isPrey()) {
+				((Prey) e).die(); // dead preys means dead shelters
+			}
+		}
+		
+		// make two preys whose chromosome will generate ofsspring 
+		Shelter s = world.createShelter(new Point(1,1), Orientation.createRandom());
+		Chromosome c = Chromosome.createRandom();
+		world.createPrey(s, c ,new Point(2,2), Orientation.createRandom());
+		world.step(); // make prey survive
+		sim.nextGeneration();
+		for(Entity e : sim.getWorld().getEntities()) {
+			if(e.isPrey()) {
+				
+				Chromosome newChromosome = ((Prey)e).getChromosome(); //due to mutations happening, this one can be different than parents
+				for(int i=0;i < Constants.CHROM_SIZE;i++) { // check if same chromosome within possible mutation margins
+					assertTrue(c.getGene(i)-Constants.GENE_DELTA <= newChromosome.getGene(i) &&
+							newChromosome.getGene(i)<=c.getGene(i)+Constants.GENE_DELTA);
+				}
+				}
+		}
+	}
 	
 	// =================================
 	// 			SIMULATION FLAWS
@@ -339,6 +434,7 @@ class FlawDetectingTests {
 			assertEquals(i , val);
 		}
 	}
+	
 	// ======================================
 	// 		END OF NEURALNETWORKS FLAWS
 	// ======================================

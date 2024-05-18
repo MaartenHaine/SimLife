@@ -139,8 +139,6 @@ public class Simulation
      * and creates a new world based on that latter list.
      * 
 	 * @creates | getWorld()
-	 * @post | old(getWorld()).numberOfEntities()== getWorld().numberOfEntities()
-	 * @post | old(getWorld()).getPreys().size()== getWorld().getPreys().size()
 	 * @post | old(getWorld()).getHunters().size()== getWorld().getHunters().size()
 	 * @post | old(getWorld()).getWidth()  == getWorld().getWidth() 
 	 * @post | old(getWorld()).getHeight()  == getWorld().getHeight() 
