@@ -139,7 +139,11 @@ public class Simulation
      * and creates a new world based on that latter list.
      * 
 	 * @creates | getWorld()
-	 * @post | old(getWorld()).getHunters().size()== getWorld().getHunters().size()
+	 * 
+	 * 
+	 * @post  if world was representation exposure protected: old(getWorld()).getHunters().size()== getWorld().getHunters().size()
+	 * It isnt so one could add hunters to sim.getWorld() and then this would fail
+	 * 
 	 * @post | old(getWorld()).getWidth()  == getWorld().getWidth() 
 	 * @post | old(getWorld()).getHeight()  == getWorld().getHeight() 
 	 * 
