@@ -42,14 +42,14 @@ public abstract class MortalEntity extends Entity
 	 * @mutates adds entity to the world  | world
 	 * also mutates world.giveEntityGrid() (this is a very slow operation and thus not documentated in a mutates)
 	 *  
-	 *  @post | getPosition().equals(position)
-	 * @post | getOrientation().equals(orientation)
-	 * @post | getMoveProbability()==moveProbability
+	 * @post | getPositionPkg().equals(position)
+	 * Dit niet want is public en dit is pack-priv constr: getOrientation().equals(orientation)
+	 * Dit niet want is public en dit is pack-priv constr: getMoveProbability()==moveProbability
 	 * @post | this.world.entityGrid.at(position).equals(this)
-	 * @post | Point.isWithin(getPosition(),this.world.getWidth(),this.world.getHeight())	
+	 * @post | Point.isWithin(getPositionPkg(),this.world.entityGrid.getWidth(),this.world.entityGrid.getHeight())	
 	 * 
 	 * nieuw
-	 * @post | isDead() == false
+	 * Dit niet want is public en dit is pack-priv constr: isDead() == false
 	 */
     MortalEntity(World world, Point position, Orientation orientation, int moveProbability)
     {

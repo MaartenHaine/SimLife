@@ -124,9 +124,9 @@ public class Prey extends MortalEntity
 	 * 
      * @mutates adds this creature to the inhabs of shelter | shelter
 	 * 
-	 * @post | getChromosome().equals(chromosome)
-	 * @post | getChromosome() != null
-	 * @post | getShelter()==shelter
+	 * Dit niet want is public en dit is pack-priv constr getChromosome().equals(chromosome)
+	 * Dit niet want is public en dit is pack-priv constr getChromosome() != null
+	 * @post | this.shelter==shelter
 	 * @post the neural Network of prey is created based upon the chromosome
 	 * @post score of the prey is zero
 	 * @post the siblings arrayList of a prey is not null, however it can be empty
@@ -145,14 +145,14 @@ public class Prey extends MortalEntity
 	 *
 	 * @mutates adds entity to the world | world
 	 * 
-	 * @post | getPosition().equals(position)
-	 * @post | getOrientation().equals(orientation)
+	 * @post | getPositionPkg().equals(position)
+	 *  Dit niet want is public en dit is pack-priv constr: getOrientation().equals(orientation)
 	 * @post | this.world.entityGrid.at(position).equals(this)
 	 * @post | this.world==world
-	 * @post | Point.isWithin(getPosition(),this.world.getWidth(),this.world.getHeight())
+	 * @post | Point.isWithin(getPositionPkg(),this.world.entityGrid.getWidth(),this.world.entityGrid.getHeight())
 	 *
 	 *mortal entity post
-	 * @post | isDead() == false
+	 *Dit niet want is public en dit is pack-priv constr isDead() == false
 	 */
 	Prey(World world, Shelter shelter, Chromosome chromosome, Point position, Orientation orientation)
     {

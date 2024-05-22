@@ -57,7 +57,7 @@ public class Hunter extends Entity
 	}
 
 	/**
-	 * @invar hunter cant die so world cant be null | getWorld() != null
+	 * @invar hunter cant die so world cant be null | world != null
 	 * @invar | world.hunters.contains(this)
 	 * @invar | shelter != null
 	 * SHELTER KAN NIET NAAR HUNTER WIJZEN?
@@ -82,12 +82,12 @@ public class Hunter extends Entity
 	 *
 	 * @mutates adds entity to the world| world
 	 * 
-	 * @post | getPosition().equals(position)
-	 * @post | getOrientation().equals(orientation)
-	 * @post | getMoveProbability()==Constants.HUNTER_MOVE_PROBABILITY
+	 * @post | getPositionPkg().equals(position)
+	 * Dit niet want is public en dit is pack-priv constr: getOrientation().equals(orientation)
+	 * Dit niet want is public en dit is pack-priv constr:  getMoveProbability()==Constants.HUNTER_MOVE_PROBABILITY
 	 * @post | this.world.entityGrid.at(position).equals(this)
 	 * @post | this.world == world
-	 * @post | Point.isWithin(getPosition(),this.world.getWidth(),this.world.getHeight())
+	 * @post | Point.isWithin(getPositionPkg(),this.world.entityGrid.getWidth(),this.world.entityGrid.getHeight())
 	*
 	 * @post The hunter will have Constants.HUNTER_INITIAL_APPETITE appetite
 	 * 
@@ -112,12 +112,12 @@ public class Hunter extends Entity
 	 *
 	 * @mutates adds entity to the world| world
 	 * 
-	 * @post | getPosition().equals(position)
-	 * @post | getOrientation().equals(orientation)
-	 * @post | getMoveProbability()==Constants.HUNTER_MOVE_PROBABILITY
+	 * @post | getPositionPkg().equals(position)
+	 * Dit niet want is public en dit is pack-priv constr: getOrientation().equals(orientation)
+	 * Dit niet want is public en dit is pack-priv constr: getMoveProbability()==Constants.HUNTER_MOVE_PROBABILITY
 	 * @post | this.world.entityGrid.at(position).equals(this)
 	 * @post | this.world == world
-	 * @post | Point.isWithin(getPosition(),this.world.getWidth(),this.world.getHeight())
+	 * @post | Point.isWithin(getPositionPkg(),this.world.entityGrid.getWidth(),this.world.entityGrid.getHeight())
 	 * @post The hunter will have an appetite as is given as argument
 	 */
 	Hunter(World world, Shelter shelter, Point position, Orientation orientation, int appetite)

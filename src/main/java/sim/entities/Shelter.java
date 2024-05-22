@@ -52,17 +52,20 @@ public class Shelter extends MortalEntity
 	 * also mutates world.giveEntityGrid() (this is a very slow operation and thus not documentated in a mutates)
 	 *   
 	 * @post | Logic.implies(old(world).entityGrid.at(position)==null, world == this.world)
-	 * @post | getPosition().equals(position)
-	 * @post | getOrientation().equals(orientation)
-	 * @post | getMoveProbability()==Constants.SHELTER_MOVE_PROBABILITY
+	 * @post | getPositionPkg().equals(position)
+	 * Dit niet want is public en dit is pack-priv constr: getOrientation().equals(orientation)
+	 * Dit niet want is public en dit is pack-priv constr: getMoveProbability()==Constants.SHELTER_MOVE_PROBABILITY
 	 * 
 	 * @post | this.world.entityGrid.at(position).equals(this)
-	 * @post | Point.isWithin(getPosition(),this.world.getWidth(),this.world.getHeight())	
+	 * @post | Point.isWithin(getPositionPkg(),this.world.entityGrid.getWidth(),this.world.entityGrid.getHeight())	
 	 * 
 	 * 
-	 * @post | isDead() == false
+	 * Dit niet want is public en dit is pack-priv constr: isDead() == false
 	 * 
 	 * shelterspecifiek:
+	 * 
+	 * dit mag eigenlijk niet want getInhabs is public maar this.inhabitants.equals(new ArrayList()) geeft error in eclipse
+	 * 
      * @post | getInhabitants().equals(new ArrayList<>())
      */
     Shelter(World world, Point position, Orientation orientation)
