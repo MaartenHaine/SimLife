@@ -2,85 +2,6 @@
 
 [[https://youtu.be/995efANumeE][DEMO]]
 
-/The first run has no assertions enabled. The second run has assertions enabled and checks only the package invariant./
-** Deadline
-
- | Course                               | Deadline                    |
- |--------------------------------------+-----------------------------|
- | “Objectgericht programmeren”, H01P1a | Friday 24 May 2024 at 15:30 |
-
- At the time of the deadline, your repositories will be automatically closed, making it impossible for you to upload any more changes.
-
- - Make sure you have *pushed* all your commits by the deadline.
-   You may have finished your project and committed everything to your repository in time, but if those changes are not pushed, we cannot take them into account when grading.
- - Some students have had bad luck with their team partner.
-   Having an inactive partner will not grant you a deadline extension, though we may take this into account for grading.
-
- There are 3 kinds of *repositories* of interest for this project, as in iteration 1 and 2:
- - The present repo merely stores the assignment text
- - The "base repo" is a publically available repository containing base sources.
- - Your submission repository is the place where you implement the project. By default it has the same sources as the base repo.
-
-** Updates (recent to old)
-
-- Added note about Gitlab's confidential issues. Summary: do not use this option. Email is best for "confidential" questions.
-- Clarification about ~Chromosome.onlyDiffersAt~:
-  The behavior of this method is somewhat different from what its name might suggest.
-  This method returns true even if the 2 chromosomes have exactly the same genes.
-  Its [[https://gitlab.kuleuven.be/distrinet/education/ogp/projects/2023-2024/assignments/iter3-base/-/blob/master/src/main/java/sim/Chromosome.java?ref_type=heads#L112][implementation in the base repo]] is correct.
-- Update in base code: ~SubmissionTests~ do not mention ~giveCopy()~ anymore.
-- CI script added to base, activates CI upon pulling that change. For this iteration we added a "Compatibility with base" badge, which indicates failure when your project is no longer binary-compatible with the base assignment. This should never be the case!
-- Update in base code: ~World.giveEntityStreamPriv()~ is now strict.
-- Added explanations of ~World.hasHunterInCone~.
-- ~World.hasHunterInCone~ contains a bug; it has been fixed in the base code. Make sure to pull in the changes; see section Receiving Updates.
-- ~Hunter~ class has been updated in the base code so as to allow ~giveCopy()~ to take into account the ~Hunter~'s appetite.
-- Clarification about enforcing invariants. Let ~O~ be a class part of a multi-class abstraction.
-  - For any public method (incl. constructors) ~O.f~, if the package invariant holds right before calling ~f~, it should still hold after ~f~ returns.
-  - Package-scoped methods (incl. constructors) ~O.g~ on the other hand are subject to no such restrictions. Such methods cannot rely on, and need not establish package invariants.
-- The link in the assignment to the issue page for this iteration has been fixed.
-- The .classpath has been fixed.
-
-** Seeking Assistance
-
- There are three ways to ask questions.
-
-*GitLab Issues.*
-
- This option should be your default choice, as all students will be able to benefit from the answers given.
- However, make sure not to reveal parts of the solution (e.g., do not post original code).
-
- Before asking a question, please check if someone else already asked the same question.
-
- [[./pngs/gitlab-issues.png]]
-
- To ask a question,
-
- - Go to [[https://gitlab.kuleuven.be/distrinet/education/ogp/projects/2023-2024/assignments/iter3-base/-/issues][the base code's repository's issue page]].
- - Press the "New Issue" button.
- - Enter a descriptive title and write your question in the description.
-   All other fields (type, assignee, ...) can be left as they are.
- - Press the "Create Issue" button.
-
- After we answered your question, we will close the issue and you should be notified by email.
- If you have a follow-up question, feel free to re-open the issue.
- Note: there is an option to make an issue confidential. Do *not* rely on this: it does not hide the issue from anyone. Use email instead in this case.
-
- To view answered questions, consult the closed issues.
-
- Make sure to create issues in the correct repository!
- If you create them in your own repository, we will not be able to see your questions.
-
-*Email.*
-
- For questions that involve showing your code or requires you to reveal too much, you should send an email to [[mailto:ogp-iteratie3@cs.kuleuven.be]].
- Please also include a link to your repository, as well as your student number and your course mnemonic (H01P1a or H02C5a).
-
-*Meeting with a TA.*
-
- You can also ask to physically meet with a TA by sending a request to [[mailto:ogp-iteratie3@cs.kuleuven.be]].
- Make sure to explain your problem(s) in detail, as the TA might want to look things up ahead of the meeting.
- Please also include a link to your repository, as well as your student number and your course mnemonic (H01P1a or H02C5a).
-
 ** Overview
 
  Iteration 3 builds on top of iteration 2, but we give you fresh code to start with so that potential mistakes you made in the previous iterations do not affect this third iteration.
@@ -108,8 +29,6 @@
 *** Entity Supertype
 
 The different entities are represented as different classes of a class hierarchy, with ~Entity~ being the supertype.
-
-[[./pngs/entity-hierarchy.png]]
 
 The ~Entity~ class contains all functionality common to all entities.
 
