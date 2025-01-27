@@ -1,0 +1,586 @@
+* OOP project 2023 2024: simlife iteration 3
+
+[[https://youtu.be/995efANumeE][DEMO]]
+
+/The first run has no assertions enabled. The second run has assertions enabled and checks only the package invariant./
+** Deadline
+
+ | Course                               | Deadline                    |
+ |--------------------------------------+-----------------------------|
+ | “Objectgericht programmeren”, H01P1a | Friday 24 May 2024 at 15:30 |
+
+ At the time of the deadline, your repositories will be automatically closed, making it impossible for you to upload any more changes.
+
+ - Make sure you have *pushed* all your commits by the deadline.
+   You may have finished your project and committed everything to your repository in time, but if those changes are not pushed, we cannot take them into account when grading.
+ - Some students have had bad luck with their team partner.
+   Having an inactive partner will not grant you a deadline extension, though we may take this into account for grading.
+
+ There are 3 kinds of *repositories* of interest for this project, as in iteration 1 and 2:
+ - The present repo merely stores the assignment text
+ - The "base repo" is a publically available repository containing base sources.
+ - Your submission repository is the place where you implement the project. By default it has the same sources as the base repo.
+
+** Updates (recent to old)
+
+- Added note about Gitlab's confidential issues. Summary: do not use this option. Email is best for "confidential" questions.
+- Clarification about ~Chromosome.onlyDiffersAt~:
+  The behavior of this method is somewhat different from what its name might suggest.
+  This method returns true even if the 2 chromosomes have exactly the same genes.
+  Its [[https://gitlab.kuleuven.be/distrinet/education/ogp/projects/2023-2024/assignments/iter3-base/-/blob/master/src/main/java/sim/Chromosome.java?ref_type=heads#L112][implementation in the base repo]] is correct.
+- Update in base code: ~SubmissionTests~ do not mention ~giveCopy()~ anymore.
+- CI script added to base, activates CI upon pulling that change. For this iteration we added a "Compatibility with base" badge, which indicates failure when your project is no longer binary-compatible with the base assignment. This should never be the case!
+- Update in base code: ~World.giveEntityStreamPriv()~ is now strict.
+- Added explanations of ~World.hasHunterInCone~.
+- ~World.hasHunterInCone~ contains a bug; it has been fixed in the base code. Make sure to pull in the changes; see section Receiving Updates.
+- ~Hunter~ class has been updated in the base code so as to allow ~giveCopy()~ to take into account the ~Hunter~'s appetite.
+- Clarification about enforcing invariants. Let ~O~ be a class part of a multi-class abstraction.
+  - For any public method (incl. constructors) ~O.f~, if the package invariant holds right before calling ~f~, it should still hold after ~f~ returns.
+  - Package-scoped methods (incl. constructors) ~O.g~ on the other hand are subject to no such restrictions. Such methods cannot rely on, and need not establish package invariants.
+- The link in the assignment to the issue page for this iteration has been fixed.
+- The .classpath has been fixed.
+
+** Seeking Assistance
+
+ There are three ways to ask questions.
+
+*GitLab Issues.*
+
+ This option should be your default choice, as all students will be able to benefit from the answers given.
+ However, make sure not to reveal parts of the solution (e.g., do not post original code).
+
+ Before asking a question, please check if someone else already asked the same question.
+
+ [[./pngs/gitlab-issues.png]]
+
+ To ask a question,
+
+ - Go to [[https://gitlab.kuleuven.be/distrinet/education/ogp/projects/2023-2024/assignments/iter3-base/-/issues][the base code's repository's issue page]].
+ - Press the "New Issue" button.
+ - Enter a descriptive title and write your question in the description.
+   All other fields (type, assignee, ...) can be left as they are.
+ - Press the "Create Issue" button.
+
+ After we answered your question, we will close the issue and you should be notified by email.
+ If you have a follow-up question, feel free to re-open the issue.
+ Note: there is an option to make an issue confidential. Do *not* rely on this: it does not hide the issue from anyone. Use email instead in this case.
+
+ To view answered questions, consult the closed issues.
+
+ Make sure to create issues in the correct repository!
+ If you create them in your own repository, we will not be able to see your questions.
+
+*Email.*
+
+ For questions that involve showing your code or requires you to reveal too much, you should send an email to [[mailto:ogp-iteratie3@cs.kuleuven.be]].
+ Please also include a link to your repository, as well as your student number and your course mnemonic (H01P1a or H02C5a).
+
+*Meeting with a TA.*
+
+ You can also ask to physically meet with a TA by sending a request to [[mailto:ogp-iteratie3@cs.kuleuven.be]].
+ Make sure to explain your problem(s) in detail, as the TA might want to look things up ahead of the meeting.
+ Please also include a link to your repository, as well as your student number and your course mnemonic (H01P1a or H02C5a).
+
+** Overview
+
+ Iteration 3 builds on top of iteration 2, but we give you fresh code to start with so that potential mistakes you made in the previous iterations do not affect this third iteration.
+
+ The first iteration focused on single-object abstractions.
+ The second iteration added inheritance to the mix.
+ The third iteration focuses on multi-class entity-relationship abstractions.
+ We strongly suggest you read through the [[https://btj.github.io/ogp-notes/multi_class_abstractions.html][corresponding chapter]] in the course material (note: we do *not*
+ apply the more advanced architecture explained [[https://btj.github.io/ogp-notes/multi_class_abstractions.html#advanced-nesting-class-encapsulated-and-package-encapsulated-abstractions][at the end of the corresponding chapter]] in this project).
+ Below we explain the multi-class abstraction between ~World~, ~Prey~, ~Hunter~, ~Shelter~ that we ask you to implement/specify/test.
+
+
+ In the previous iterations, we dealt with creatures.
+ We will now call these "entities". The world is inhabited by three types of "entities":
+ - Shelters :: Act as home for preys.
+ - Hunters :: Chase preys and can eat them.
+ - Preys :: Try to avoid hunters and stay close to their shelter.
+ Note that shelters and preys are *mortal*.
+
+ In the previous iterations, creatures would all live until the end of the generation, i.e., when the user presses the space bar.
+ In this iteration, it is possible that a prey or shelter does not make it that far: it can die off during the run of a generation.
+
+ We discuss each entity in detail.
+
+*** Entity Supertype
+
+The different entities are represented as different classes of a class hierarchy, with ~Entity~ being the supertype.
+
+[[./pngs/entity-hierarchy.png]]
+
+The ~Entity~ class contains all functionality common to all entities.
+
+- An entity has a position, an orientation and a move probability.
+- An entity also keeps track of the ~World~ it inhabits.
+- An entity has a color.
+
+The ~performAction~ method defines an entity's behavior: it is here that an entity can decide whether to move or turn.
+The actual implementation depends on the type of entity, so at the level of ~Entity~, no behavior can be defined.
+
+*** ~MortalEntity~
+
+This class is the supertype for all mortal entities.
+In addition to the state stored by ~Entity~, it also has a field that stores whether the entity is still alive or not.
+
+The ~die()~ method effectively kills an entity: the entity sets its internal state so as to remember its deceased status and it removes itself from the ~World~.
+A dead entity cannot perform any more actions: its ~performAction~ first checks if the entity is still alive.
+If it is indeed alive, the ~performActionIfAlive~ method is called (which has to be implemented by subtypes), otherwise nothing happens.
+
+*** ~Shelter~
+
+A shelter acts as a home for preys.
+Each shelter keeps track of which preys live there.
+
+A shelter is mortal: it dies as soon as all its inhabitants are dead.
+If a shelter is dead, it should have no preys that inhabit it.
+
+Perhaps unintuitively, a shelter can move around, albeit slowly.
+When it performs its action (and it is still alive):
+
+- First, it has ~Constants.SHELTER_TURN_PROBABILITY~ chance of turning. In 50% of the cases it turns clockwise, in the other 50% if turns counterclockwise.
+- Next, it has ~Constants.SHELTER_MOVE_PROBABILITY~ chance of moving one step forward.
+
+Shelters are represented by black pixels.
+
+*** ~Prey~
+
+A prey is associated with exactly one shelter: we say that the prey *inhabits* that shelter.
+All preys which inhabit the same shelter are considered the prey's siblings.
+Each prey stores a list of its siblings.
+In other words, you can think of a shelter as the family home.
+
+A prey dies if a hunter catches it (see below).
+Upon death, it removes itself from the world.
+A dead prey is not considered to be a sibling anymore, by which we mean that if a prey P dies, all its siblings must remove P from their sibling list, "forgetting" about their deceased family member as it were.
+
+As mentioned above, a shelter keeps track of the prey that inhabit it.
+Upon death, a prey is also removed from this list of inhabitants.
+If a dying prey happens to be the sole remaining inhabitant of a shelter, then the shelter itself must also die (note: live empty shelters may exist, for example at the beginning of the simulation).
+
+A prey has a chromosome, which determines its behavior: the genes stored on the chromosome determine the weights of a neural network, which in turns controls the prey's movement.
+We postpone giving details about the neural network further below.
+Suffice it to say for now that the neural network has two output neurons:
+
+- One neuron (the "turn neuron") whether the prey turns:
+  - if it outputs a value less than `-333`, the prey turns clockwise.
+  - if it outputs a value greater than `333`, the prey turns counterclockwise.
+  - for other values, the prey does not turn.
+- The other neuron (the "move forward neuron") determines whether the prey moves: if its output is strictly positive, the prey will move forward, on the condition that the position in front be free.
+
+~Prey~ also has a ~survives~ method: this method is called when it is time to start a new generation (i.e., user pressed the space bar).
+Preys whose ~survives~ method return ~true~ get to procreate.
+In other words, this method replaces the ~NaturalSelection~ hierarchy from the previous iteration.
+
+Prey survival is determined as follows: each prey keeps a score, initially ~0~.
+Each time after a prey has moved/turned around (implemented in ~performAction~), it checks how far away it is from its shelter.
+If the distance between the prey and its shelter is less than ~SHELTER_SURVIVAL_DISTANCE~, its score is incremented by 1, otherwise it is decreased by 1.
+~survives()~ returns ~true~ when this score is strictly greater than zero (and the prey is not currently dead).
+In other words, if during a generation's run, a prey spends at least one half of its time in proximity of its shelter, it gets to procreate.
+
+Preys are shown as green pixels.
+
+*** ~Hunter~
+
+Contrary to preys and shelters, a hunter is immortal and will roam the ~World~ during the entire run of the current generation.
+
+A hunter is associated with a shelter and will only hunt preys that inhabit that shelter.
+
+A hunter's behavior is fixed and is not dependent on chromosomes or neural networks.
+Instead, all hunters behave as follows:
+
+- First, it determines whether it will actually move or not.
+  At each step, it has a chance of ~Constants.HUNTER_MOVE_PROBABILITY~ to move.
+- If the hunter decides to move, it will look for the prey closest to it.
+  Only preys inhabiting the shelter the hunter is targetting are considered here: other preys might as well not exist.
+- Once the closest prey is found, it will turn so as to face it.
+  The hunter can turn an arbitrary amount in a single step: it doesn't have to turn in increments of 45 degrees.
+- The hunter then prepares to move forward.
+  - If moving forward lets the hunter reaches a prey of the correct shelter, this prey gets eaten.
+    The hunter then moves to the position that was previously occupied by the prey.
+    With "reaching the prey" we mean that the hunter ends up on exactly the same location as the prey.
+  - If the hunter bumps into a prey of the wrong shelter, nothing happens: the prey is left alone, and the hunter does not move forward.
+    The same is true if the hunter runs into another hunter, or into a shelter.
+  - If the positon in front of the hunter is free, then the hunter simply moves forward.
+
+If no more preys inhabiting the right shelter remain, the hunter will remain immobile for the rest of its life.
+
+A hunter has a certain appetite: it can only eat up to ~Constants.HUNTER_INITIAL_APPETITE~ preys.
+Once it has managed to eat that many preys, the hunter is too full to do anything: it will remain immobile for the rest of its life.
+
+Hunters are shown as red pixels.
+
+*** Neural Network
+
+Preys are controlled by a neural network.
+Neural networks work the same as in iteration 2, but we slightly changed their structure.
+
+On the input layer, there are five sensor neurons:
+
+- Three of them check for a free passage in front, in front to the left and in front to the right of the prey.
+  This is the same as in iteration 2.
+- A ~HunterSensor~ detects if there is a hunter somewhere ahead of the prey. This logic is implemented in ~World.hasHunterInCone~.
+- A ~ShelterSensor~ detects if the prey's currently looking towards its shelter.
+
+The output layer only contains two output neurons, namely a ~moveForwardNeuron~ and a ~turnNeuron~, both instances of ~LinearFunctionNeuron~.
+They are connected to all input neurons, the weights are determined by the chromosome, just like in iteration 2.
+
+*** World
+
+In previous iterations, the ~World~ kept a list of creatures.
+This was actually quite inefficient: we often needed to know whether a particular location L was free, which entailed going through the list of creatures and determining whether any of them was position at L.
+We now switch to a different data structure, namely a ~Grid~.
+
+The ~Grid<T>~ has a width and height, and it can store a value of type ~T~ at each position.
+~null~ values are permitted: it simply means no value is present at that position.
+The ~World~ will rely on a ~Grid<Entity>~ to store its inhabitants.
+A grid allows to find a value at a particular location in a single step, making determining whether a particular location is free much faster.
+
+Notice that we have some redundancy: on the one hand, an ~Entity~ stores its location in a field, but the ~World~ also stores each ~Entity~ in a particular location in its grid.
+In other words, an entity's position is stored twice.
+It is crucial that the ~Entity~ and the ~World~ agree about this position.
+
+~World~ offers a method ~boolean hasHunterInCone(Point top, Orientation orientation)~.
+This method checks if an observer placed at position ~top~ in the world, looking
+in the direction ~orientation~ and having a field of view of 45 degrees, can see a hunter or not.
+
+[[./pngs/closest-orientation.png]]
+
+For example, say ~top~ represents the position of the middle square in the figure above,
+and ~orientation~ equals south, then ~hasHunterInCone(top, orientation)~ will return ~true~
+if there is at least one hunter in the zone marked S.
+
+*** Simulation
+
+~Simulation~ functions similarly to the previous iterations:
+
+- We can compute the next state of the world using `simulation.getWorld().step()`.
+  This calls the ~performAction()~ of each ~Entity~, allowing them to move around/turn/eat preys/etc.
+- ~simulation.nextGeneration()~ starts a whole new generation. This method is called when the user presses the space bar.
+
+A simulation has the following parameters:
+
+- ~worldSize~ determines the size of the world.
+  The world always has a square shape.
+- ~shelterCount~ determines the initial number of shelters put in the world.
+- ~inhabitantsPerShelter~ determines the number of preys per shelter.
+- ~huntersPerShelter~ determines the number of hunters per shelter.
+
+In other words, at the start of a generation, the total number of entities is ~shelterCount * (inhabitantsPerShelter + huntersPerShelter + 1)~.
+The total number of preys ~preyCount~ equals ~shelterCount * inhabitantsPerShelter~.
+
+The next generation is computed as follows:
+
+- First, we determine which preys survive.
+  This is done by finding all preys in the world whose ~survives~ method returns ~true~.
+- We collect the chromosomes of these preys.
+  Let's call these the parent chromosomes.
+  In case there are no survivors, ~preyCount~ random chromosomes are created.
+- The offspring chromosomes are computed.
+  Two random chromosomes are picked from the pool of parent chromosomes.
+  For simplicity's sake we allow the same chromosome to be picked twice.
+  The two selected parent chromosomes are crossed over.
+  Next, there is a ~Constants.MUT_RATE~ chance that a mutation is applied.
+  We repeat this process ~preyCount~ times.
+  This yields ~preyCount~ offspring chromosomes.
+- A new ~World~ is created with the same dimensions as the previous one.
+- ~shelterCount~ shelters are created, put on random positions and having random orientations.
+- For each shelter, ~inhabitantsPerShelter~ preys are added to the world, again with random positions and orientations.
+  Each prey is given one of the offspring chromosomes (each offspring chromosome is given to exactly one prey).
+- For each shelter, ~huntersPerShelter~ hunters are added to the world, with a random position and orientation.
+- This newly constructed ~World~ is the initial state of the new generation.
+
+The initial world of the first generation is created in the same way, except that the offspring chromosomes are simply randomly generated instead of derived from the parent generation.
+
+*** Removed Classes
+
+Iteration 3 contains fewer classes than the previous iteration:
+
+- No more ~Behavior~ hierarchy: the behavior is implemented directly in the ~Entity~ subtypes (~performAction~).
+- No more ~NaturalSelection~ hierarchy: a prey's ~survives~ method now determines whether it gets to procreate (i.e., ~Prey.survives()~).
+- Fewer input neurons classes.
+- Creature class has been replaced by ~Entity~ class hierarchy.
+
+*** Summary of the multi-class abstraction
+ Iteration 3's focus lies on multi-object abstractions.
+ We provide an overview that hopefully clarifies the how the different classes are related to each other.
+
+ [[./pngs/object-graph.png]]
+
+ The white, fat arrows denote an inheritance relation.
+ The red arrows represent associations between classes, i.e., objects holds a references to other objects.
+
+ - ~World~ keeps track of all the ~Entity~ objects through a field ~entityGrid~ of type ~Grid<Entity>~.
+ - Each ~Entity~ links back to the ~World~ through a field ~world~.
+ - When an ~Entity~ dies, the bidirectional association between it and ~World~ is removed:
+   the ~Entity~ should not appear in the ~entityGrid~, and the ~Entity~'s ~world~ field should be set to ~null~.
+ - For efficiency reasons, ~World~ keeps all ~Hunter~'s in a list named ~hunters~.
+   Note: hunters are stored in *both* ~entityGrid~ and ~hunters~.
+ - A ~Hunter~ keeps a reference to a ~Shelter~.
+   A ~Hunter~ will only chase and eat preys that inhabit this shelter.
+ - A ~Shelter~ uses a list of ~Prey~ objects to store its inhabitants in.
+ - Each ~Prey~ keeps track of its ~Shelter~ through the field ~shelter~.
+   When a ~Prey~ dies, it is removed from the shelter's ~inhabitants~ list,
+   and the ~Prey~'s ~shelter~ field is set to ~null~.
+ - A ~Prey~ keeps a list ~siblings~, which are preys that inhabit the same shelter.
+   ~siblings~ only contains live preys: as soon as a prey dies, it is removed from this list.
+
+Reminder: when we say a prey ~P~ *inhabits* a shelter ~S~, it simply means that ~P~ is associated with ~S~: ~P.shelter == S~ and ~S.inhabitants.contains(P)~.
+In other words, it has nothing to do with their respective positions.
+** What To Do
+
+ The goal of the project is the same as in iteration 1 & 2: you receive access to a Git repository containing starter code.
+ This code is incomplete and will need to be fixed.
+ The present section lists general guidelines about implementing/specifying/testing your project.
+
+*Code.*
+
+ - Some given code might be flawed, in which case you will need to fix it and write a test detecting the spotted flaw (as in iteration 1 & 2).
+   *Important note*: this time we ask that you write your flaw-detecting tests in file in ~src/test/java > other.FlawDetectingTests.java~.
+ - You must provide an implementation for the incomplete methods (typically 0 or null is returned in such methods) in the base code.
+ - All constructors must apply defensive programming, i.e., throw an ~IllegalArgumentException~ when given invalid input.
+   Other methods should apply contractual programming.
+ - Usage of ~instanceof~ or ~getClass()~ or ~.class~ is not allowed, except in unit tests and to write equality functions.
+ - Do *not* modify the signatures of the given code: do not modify class/interface names, parameter types or return types.
+ - Defining extra methods and classes is allowed, but make sure to *not* refer to them in the flaw detection tests.
+ - Your code should be able to run with assertions enabled, although it may run quite slowly.
+ - This command appears at the beginning of the main program: ~RandomUtil.seed(1234);~. It ensures that 2 runs of the program
+   choose the same "random" values (if the user presses space at the exact same time).
+   Make sure to keep this line in your main. The above line of code makes the
+   program somewhat deterministic *but* you should still consider, in any case, that the values generated by ~RandomUtil~ methods are truly random.
+   For more information, see section *Random Number Generation* in this document
+ - In a multi-class abstraction, references to peers are supposed to be publically available to the client.
+ - All classes in package ~simpleui~ and ~util~ are marked as LEGIT.
+
+*Specifications.*
+
+ - You must write 2 invariants for a multi-class abstraction: a package-scoped invariant (w.r.t. package fields) and
+   a public invariant (w.r.t. public getters).
+ - Since running a project with assertions can be slow, we advise you to *begin by only writing the above package invariant*.
+   This way running your project with assertions enabled should let you catch errors in the multi-class abstraction implementation quickly
+   (quicker than with a fully specified project).
+   Another possibility to speed things up is to comment out specifications that are not part of the package invariant
+   when you want to test it.
+ - Regarding the public invariant of the multi-class abstraction: it is sufficient to not add extra public getters and
+   only use the ones provided by us, even if it means that the public invariant you write is less precise.
+ - Add FSC4J specifications (invariants, preconditions, postconditions, etc.) to all classes and methods. Classes have 2 kinds of invariants,
+   a private and a public one.
+   LEGIT classes/methods are exempt. Private methods are exempt. Package-scoped methods are exempt.
+ - Methods annotated with LEGIT are complete and correct: you do not need to change them in any way, nor do you have to test them.
+   When a class is LEGIT, it means all its methods are LEGIT.
+ - All FSC4J clauses/java comments that we provide can be considered correct but may be incomplete.
+   I.e. it is possible (and probable) that you need to add extra lines in order to further specify the method/class at hand.
+ - Sometimes it is not possible to accurately specify the behavior of a method.
+   For example some methods of
+   the project use randomness making it impossible to give those methods completely accurate post-conditions.
+   Another example is methods that render the simulation on a system window.
+   In general, try to write formal specifications as precise as reasonnably possible
+   and replace formal specs by brief comments (if relevant) when that is not possible.
+ - If a method returns a stream you don't have to specify it (explanation: streams are consumed once
+   so if such a method has two postconditions referring to ~result~, the second post condition will result in an error).
+ - ~World~ and ~Grid~ have helper methods returning ~Stream~'s. These methods can be used to efficiently traverse
+   the collection of entities/positions, for example when declaring that a certain property must holds for all entities.
+   ~Stream~'s are never stored entirely in memory, instead their data is processed datum per datum which makes them
+   faster for traversals, compared to e.g. ~ArrayList~'s which are entirely stored in memory.
+
+*Testing.*
+
+ - See [[https://btj.github.io/ogp-notes/lecture2part2.html#unit-test-best-practices][best practices for writing unit tests]].
+ - *Important note*: this time, we ask that you write your
+   flaw-detecting tests in ~src/test/java > other.FlawDetectingTests.java~.
+   Otherwise, "normal" tests for a class located at ~src/main/java/.../MyClass.java~ should be
+   written in the file ~src/test/java/.../MyClassTest.java~.
+ - As mentioned earlier, if the given code is flawed, you should write flaw-detecting tests.
+   A flaw-detecting test must fail when run on the flawed given code, but pass after you fixed it.
+   *Important:* Flaw detecting tests should not directly reference methods or classes that you added yourself.
+ - For convenience, you may want to test some package-scoped method to double check that it behaves as you expect.   
+   This is indeed possible
+   if the package to which your test file belongs (see package declaration, first line of file) matches
+   the package containing the methods you wish to test.
+   We don't require nor particularly encourage having such internal tests (i.e. for package-scoped
+   methods). What is rather expected is that you test /public/ methods to see if they uphold their specification.
+ - You should test all non-LEGIT code.
+ - Conversely, LEGIT code does not have to be tested.
+ - The tests you write should succeed when executed without assertions enabled.
+ - Notice that private methods cannot be tested.
+
+** Constants
+
+*** Referring to Constants
+
+As in previous iterations, the ~Constants~ class defines a series of constants.
+When you need to refer in your code to one of these constants, make use of the ~Constants~ field that contains this value and do not hardcode the value.
+For example, say ~WORLD_SIZE~ is defined as ~250~:
+
+#+begin_src java
+  // Correct
+  void someMethod(int x)
+  {
+      if ( x > Constants.WORLD_SIZE ) { ... }
+  }
+
+  // WRONG
+  void someMethod(int x)
+  {
+      if ( x > 250 ) { ... }
+  }
+#+end_src
+
+*** Enforcing
+
+When a method receives a parameter for which there happens to exist a constant, you should NOT demand the parameter has this constant's value.
+For example,
+
+- ~Constants~ defines ~WORLD_SIZE~.
+- The ~World~ constructor takes parameters ~width~ and ~height~.
+
+The ~World~ constructor should not require that ~width~ and ~height~ are equal to ~Constants.WORLD_SIZE~: it defeats the purpose of having parameters.
+The constants will be used by the code that calls the ~World~ constructor.
+
+*** Modifying Constants
+
+For testing purposes, it can be useful to modify the constants' values: for performance reasons, when running with assertions enabled, you might want to work with a small world with a limited number of entities.
+Do restore them to their original values before submitting your final version though.
+
+** Grading
+
+ Your grade for this project will be based on the following:
+
+ - Correctness: Do tests from our private test suite pass on your implementation, i.e., is your implementation correct?
+ - Completeness: How many flawed features in the original project are detected by the tests you wrote, i.e., is your test suite “complete”?
+ - Specifications: Some (non LEGIT) methods/class specifications are incomplete. Are they complete in your project?
+ - Running the project: Can we play the simulation normally when running your implementation? Does it run with assertions?
+ - Coverage: What fraction of your implementation is properly unit tested?
+
+ More generally, does your implementation respect the guidelines prescribed in this assignment?
+
+** Checklist
+
+ To help you make sure you are submitting a sound project, we summarize all submission guidelines and advices as a checklist.
+ Make sure to enforce all of those guidelines and make sure to submit your final solution in your team's submission repo, as a set of commits to ~master~.
+
+ - Have you installed the FSC4J plugin?
+ - Make sure you have pulled in all updates to the base code (see section Receiving Updates).
+ - Make sure you did not remove or rename any given classes or change any given method's signatures.
+   To check this you can compare your implementation to the base repo.
+ - Make sure your project compiles.
+   The ~Problems~ panel of Eclipse lists compilations errors and warnings.
+ - Your flaw-detecting tests should not call methods that you added yourself.
+ - Make sure you can run your simulation, both with and without assertions.
+ - Some classes/methods are marked as LEGIT. Make sure they are restored (if you applied some modifications for testing purposes) before submitting.
+ - Do the following aspects of your project have the expected behavior?
+   | Aspect                                             | FSC4J | Implementation  | exp. behavior         | Hard prerequisite? |
+   |----------------------------------------------------+-------+-----------------+-----------------------+--------------------|
+   | Flaw-detecting tests in ~other.FlawDetectingTests~ | No    | Original        | fully fail            | no                 |
+   | Tests in ~src/test/java~                           | No    | Yours           | fully succeed         | no                 |
+   | Submission test suite(s)                           | No    | Yours           | fully succeed         | *yes*              |
+   | Correction test suite                              | No    | Yours           | successfully compiles | *yes*              |
+   | Coverage                                           | No    | Yours           | as high as possible   | no                 |
+   | FSC4J specs                                        | N/A   | Yours           | complete              | no                 |
+   | Compatibility with base                            | N/A   | Yours with ours | OK                    | *yes*              |
+ - Make sure your final code resides on the ~master~ branch, as this is the only branch we take into consideration for grading.
+ - Make sure you have pushed all your changes to your remote submission repo.
+ - Are all the CI badges looking good?
+   The CI badges of your submission repo will double check only some of the items in this list.
+   The CI badges may be unavailable during the first weeks this project is released.
+
+** Git
+
+*Receiving Updates.*
+
+ As with iteration 1, the base code you start with may need some updates (e.g., clarifications, bug fixes, etc.)
+ It is your responsibility to make sure you pull in these changes.
+
+ #+begin_src bash
+ # Go to the root of you submission repo. Then:
+
+ # Add the remote repo that gets the updates by the course team to your list of tracked remote repos.
+ # It is sufficient to do this only once.
+ # For H01P1a and H02C5a:
+ git remote add upstream https://gitlab.kuleuven.be/distrinet/education/ogp/projects/2023-2024/assignments/iter3-base
+
+ # Download the updates to your local repo.
+ # The following merely updates your copy of upstream/master, and does not modify your implementation yet.
+ git fetch upstream master
+
+ # (make sure to be in the master branch if you use branches)
+ git checkout master
+
+ # Apply the updates. /!\ Likely results in merge conflicts.
+ git pull --no-rebase upstream master
+
+ # You can check for merge conflicts using this.
+ git status
+ #+end_src
+
+*Help with Git.*
+- [[https://git-scm.com/book/en/v2][Free online book]] detailing [[https://git-scm.com/book/en/v2/Git-Basics-Getting-a-Git-Repository][how to cloning using the shell]]
+- [[https://rogerdudler.github.io/git-guide/?utm_source=recordnotfound.com][Quick Git Recipes]]
+- [[https://gitlab.kuleuven.be/help/user/ssh.md][Generating SSH keys and using them with Gitlab]]
+
+** Valid submissions
+
+Project submission is done through committing to the master branch of your group’s repository. We take the most recent commit which happened before the deadline expired for grading.
+Make sure that your simulation can play with assertions enabled (that is of course expected for a correct project).
+Your submission will be graded only if it meets the following criteria:
+
+- Your final implementation +
+  (a curated) SubmissionTestSuite.java should compile and this test suite should fully succeed (without assertions).
+- Your final implementation + our private test suite compiles. For performance we will run our suite without assertions.
+
+Overall it is important that you neither modify nor remove any existing method or field signatures.
+Similarly, do not modify or remove SubmissionTestSuite.java.
+
+Note that your submission repo has badges (appearing at the top of the web UI)
+that can indicate if some aspect of your project seems incorrect.
+When you commit, those badges get updated (this may take some time).
+
+** Random Number Generation
+
+*** Summary
+
+- Make sure that you call ~RandomUtil.seed~ at the very beginning of your program (first line of ~simpleui.MainSim.main~).
+  If you correctly pulled in the latest changes from the base repo, this should be the case.
+- If you need to generate random numbers in your code, rely on ~RandomUtil~.
+
+*** Full Explanation (Optional Read)
+
+A computer's processor is deterministic: each instruction will give you the same outputs if given the same inputs.
+So how does one write nondeterministic code, e.g., how does one write code that simulates the roll of a die?
+
+A pseudorandom number generator (PRNG) is an algorithm that "fakes" random numbers.
+In simplified terms, it starts with a number (a seed) which can be chosen arbitrarily (typically the current time is used), let's call this value ~x0~.
+When the PRNG is asked to generate a random vlaue, it performs a function ~f~ on ~x0~ yielding ~x1 = f(x0)~, which it returns to you as result.
+If a second random number is requested, it performs the same operations on ~x1~, producing ~x2 = f(x1)~, and so on.
+In other words, a PRNG produces a sequence ~x0~, ~x1 = f(x0)~, ~x2 = f(f(x0))~, ~x3 = f(f(f(x0)))~, ...
+If ~f~ is complex enough, the produced numbers will seem random.
+To get an idea of what ~f~ looks like, check out the page on [[https://en.wikipedia.org/wiki/Mersenne_Twister][the Mersenne Twister]].
+
+A PRNG is deterministic: if initialized with the same seed, it will produce the same sequence of random numbers.
+This is especially helpful when debugging.
+
+The reason we asked you to add the extra line in the ~main~ method is to ensure that results are consistent.
+For example, some teams wrote code that would *occassionally* hang, which caused some pipeline troubles.
+With a fixed seed, your project will either always hang or never hang.
+If it does hang, you should check your algorithms to ensure that they always terminate regardless of the numbers produced by ~RandomUtil~.
+
+An example of often reoccurring erroneous code:
+
+#+begin_src java
+  void someMethod(int nCreatures)
+  {
+      int i = RandomUtil.integer(nCreatures);
+      int j = RandomUtil.integer(nCreatures);
+
+      while ( i == j )
+      {
+          j = RandomUtil.integer(nCreatures);
+      }
+  }
+#+end_src
+
+This code will loop endlessly in case ~nCreatures == 1~.
+
+If you wish to add extra RNG-functionality, add this as methods to ~RandomUtil~ and always rely on the ~random~ object.
